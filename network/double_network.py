@@ -147,22 +147,18 @@ def main():
                 test_dataloader, train_dataloader, times)
 
     def loss(y_pred, y_true):
-        timeout_loss = F.binary_cross_entropy_with_logits(y_pred["timeouts"], y_true["timeouts"])
-        algorithm_selection_loss = F.cross_entropy(y_pred["algorithm_selection"], F.softmax(y_true["algorithm_selection"], dim=1))
+        # timeout_loss = F.binary_cross_entropy_with_logits(y_pred["timeouts"], y_true["timeouts"])
+        # algorithm_selection_loss = F.cross_entropy(y_pred["algorithm_selection"], F.softmax(y_true["algorithm_selection"], dim=1))
         max_values = [max([float(y_true["times"][j][i]) for j in range(length) if y_true["times"][j][i] < 3600]) for i in range(len(y_true["times"][0]))]
         min_values = [min([float(y_true["times"][j][i]) for j in range(length) ]) for i in range(len(y_true["times"][0]))]
         weights = [[1. for _ in range(length)] for _ in range(len(y_true["times"][0]))]
-        # weights = 1 + torch.tensor([
-        #         [(float(y_true["times"][j][i]) - min_values[j]) / (max_values[j] - min_values[j]) 
-        #             if y_true["times"][j][i] < 3600 else 2 
-        #             for j in range(length)] 
-        #         for i in range(len(y_true["times"][0]))
-        #     ])
-        for j in range(len(y_true["times"][0])):
-            for i in range(length):
-                weights[j][i] += (float(y_true["times"][i][j]) - min_values[j]) / (max_values[j] - min_values[j])
+        weights = 1 + torch.tensor([
+                [(float(y_true["times"][i][j]) - min_values[j]) / (max_values[j] - min_values[j]) 
+                    if y_true["times"][i][j] < 3600 else 2 
+                    for i in range(length)] 
+                for j in range(len(y_true["times"][0]))
+            ])
 
-        weights = torch.tensor(weights)
         weights = weights.to(device)
         combined = -torch.sum(y_true["algorithm_selection"] * torch.log_softmax(y_pred["algorithm_selection"], dim=1) * weights, dim=1) 
         combined = torch.mean(combined)
