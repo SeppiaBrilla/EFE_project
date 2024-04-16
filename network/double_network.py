@@ -6,7 +6,7 @@ from sklearn.metrics import accuracy_score, f1_score
 from neuralNetwork import In_between_epochs
 import torch.nn.functional as F
 from helper import dict_lists_to_list_of_dicts, get_dataloader, get_time_matrix, remove_comments, save_predictions
-from models import Timeout_and_selection_model, get_tokenizer
+from old_models import Timeout_and_selection_model, get_tokenizer
 from sys import argv
  
 class Evaluate_time(In_between_epochs):
@@ -76,7 +76,7 @@ def main():
     
     if argv[1] == '--help':
         print("network.py dataset batch_size bert_type epochs learning_rate history_file prediction_file save_weights_file pretrained_weights")
-        print("bert types: \n[1]FacebookAI/roberta-base \n[2]bert-base-uncased \n[3]allenai/longformer-base-4096")
+        print("bert types: \n[1]FacebookAI/roberta-base \n[2]bert-base-uncased \n[3]allenai/longformer-base-4096 \n[4]microsoft/codebert-base")
         return
     
     dataset, batch_size, bert_type, epochs, learning_rate, history_file, prediction_file, save_weights_file = argv[1], int(argv[2]), argv[3], int(argv[4]), float(argv[5]), argv[6], argv[7], argv[8]
@@ -91,7 +91,8 @@ def main():
         bert_type = "bert-base-uncased"
     elif bert_type == "3":
         bert_type = "allenai/longformer-base-4096"
-
+    elif bert_type == "4":
+        bert_type = "microsoft/codebert-base"
     f = open(dataset)
     data = loads(f.read())
     f.close()
@@ -99,7 +100,7 @@ def main():
     tokenizer = get_tokenizer(bert_type)
     instances_and_model = [remove_comments(d["instance_value"]) for d in data]
 
-    x = dict_lists_to_list_of_dicts(tokenizer(instances_and_model, padding=True, truncation=True, return_tensors='pt'))
+    x = dict_lists_to_list_of_dicts(tokenizer(instances_and_model, padding=True, return_tensors='pt'))
     y = []
 
     combinations = [d["combination"] for d in sorted(data[0]["all_times"], key= lambda x: x["combination"])]
@@ -116,7 +117,7 @@ def main():
         })
         
     all_times = [datapoint["all_times"] for datapoint in data]
-    train_dataloader, validation_dataloader, test_dataloader = get_dataloader(x, y, 4, [9])
+    train_dataloader, validation_dataloader, test_dataloader = get_dataloader(x, y, 8, [9])
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print("operating on device:", device)
@@ -147,23 +148,30 @@ def main():
                 test_dataloader, train_dataloader, times)
 
     def loss(y_pred, y_true):
-        # timeout_loss = F.binary_cross_entropy_with_logits(y_pred["timeouts"], y_true["timeouts"])
-        # algorithm_selection_loss = F.cross_entropy(y_pred["algorithm_selection"], F.softmax(y_true["algorithm_selection"], dim=1))
-        max_values = [max([float(y_true["times"][j][i]) for j in range(length) if y_true["times"][j][i] < 3600]) for i in range(len(y_true["times"][0]))]
+        non_timeout = [[float(y_true["times"][j][i]) for j in range(length) if y_true["times"][j][i] < 3600] for i in range(len(y_true["times"][0]))]
         min_values = [min([float(y_true["times"][j][i]) for j in range(length) ]) for i in range(len(y_true["times"][0]))]
-        weights = [[1. for _ in range(length)] for _ in range(len(y_true["times"][0]))]
-        weights = 1 + torch.tensor([
-                [(float(y_true["times"][i][j]) - min_values[j]) / (max_values[j] - min_values[j]) 
-                    if y_true["times"][i][j] < 3600 else 2 
-                    for i in range(length)] 
+        max_values = [max(non_timeout[i]) if len(non_timeout[i]) > 0 else min_values[i] for i in range(len(y_true["times"][0]))]
+        weights_selection = 1 + torch.tensor([
+                [(float(y_true["times"][i][j]) - min_values[j]) / (max_values[j] - min_values[j] + 1e-12)
+                    if y_true["times"][i][j] < 3600 else 2
+                    for i in range(length)]
                 for j in range(len(y_true["times"][0]))
             ])
 
-        weights = weights.to(device)
-        combined = -torch.sum(y_true["algorithm_selection"] * torch.log_softmax(y_pred["algorithm_selection"], dim=1) * weights, dim=1) 
-        combined = torch.mean(combined)
-        del weights
-        return combined
+        weights_selection = weights_selection.to(device)
+        algorithm_selection = -torch.sum(y_true["algorithm_selection"] * torch.log_softmax(y_pred["algorithm_selection"], dim=1) * weights_selection, dim=1)
+        algorithm_selection = torch.mean(algorithm_selection)
+        del weights_selection
+
+        weights_timeouts = 1 + y_true["algorithm_selection"]
+        weights_timeouts = weights_timeouts.to(device)
+        timeouts_out = F.sigmoid(y_pred["timeouts"])
+        timeouts = -(y_true["timeouts"] * torch.log(timeouts_out) + (1 - y_true["timeouts"]) * torch.log(1 - timeouts_out))
+        timeouts = torch.mean(timeouts)
+        del weights_timeouts
+        return (algorithm_selection + timeouts) / 2
+    for param in model.bert.parameters():
+                param.requires_grad = False
 
     train_data, validation_data =   model.train_network(train_dataloader, 
                     validation_dataloader, 
