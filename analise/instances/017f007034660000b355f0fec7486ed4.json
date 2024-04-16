@@ -1,0 +1,4 @@
+{"blksize_delta_Function1D": {"1": 2, "2": 2, "3": 2}, "fin1": 2, "fin2": 82, "fin3": 3, "fin4": 7, "fin5": 3,
+ "fin6": 2, "fin7": 3, "maxcars_Function1D": {"1": 7, "2": 7, "3": 7}, "n_cars": 144, "n_classes": 2, "n_options": 3,
+ "quantity_Function1D": {"1": 82, "2": 62}, "usage_RelationAsSet_Explicit_1": {"1": 1, "2": 2, "3": 2},
+ "usage_RelationAsSet_Explicit_2": {"1": 1, "2": 2, "3": 3}}
