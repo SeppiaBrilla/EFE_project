@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader
 from helper import dict_lists_to_list_of_dicts, get_dataloader, remove_comments, save_predictions, get_time_matrix
 from old_models import Timeout_and_selection_model, get_tokenizer
 from sys import argv
+from random import randint
  
 class Evaluate_time:
 
@@ -37,6 +38,31 @@ class Evaluate_time:
         print(f"test set:\n{self.vb_test}     {pred_test}     {self.sb_test}")
         print(f"\n{'-'*100}\n")
 
+def analyse_prediction(preds, trues, times):
+    fp, fn, tp, tn = 0, 0, 0, 0
+    jt = 0
+    good_oracle, bad_oracle, random_oracle = 0, 0, 0
+    for i in range(len(preds)):
+        _, y_true = trues.dataset[i]
+        y_pred = preds[i]
+        if len(y_pred) == sum(y_pred):
+            jt +=1
+        remaining_times = [times[i, j] for j in range(len(y_pred)) if y_pred[j] == 0]
+        good_oracle += min(remaining_times)
+        bad_oracle += max(remaining_times)
+        random_oracle += remaining_times[randint(0, len(remaining_times) - 1)]
+        for idx in range(len(y_pred)):
+            if y_pred[idx] == y_true["timeouts"][idx]:
+                if y_pred[idx] == 1:
+                    tp +=1
+                else:
+                    tn +=1
+            else:
+                if y_pred[idx] == 1:
+                    fp +=1
+                else:
+                    fn +=1
+    return {"fp":fp, "fn":fn, "tp":tp, "tn":tn, "jt":jt, "good_oracle": good_oracle, "bad_oracle":bad_oracle, "random_oracle": random_oracle}
 
 
 def main():
@@ -100,12 +126,76 @@ def main():
     min_train = np.sum([min(times[i, :]) for i in range(len_train)])
     min_val = np.sum([min(times[len_train + i, :]) for i in range(len_val)])
     min_test = np.sum([min(times[len_train + len_val + i, :]) for i in range(len_test)])
-   
-    in_between = Evaluate_time(len_train, len_val, len_test, 
-                round(min_train, 2), round(min_val, 2), round(min_test, 2), 
-                round(sb_train, 2), round(sb_val, 2), round(sb_test, 2), 
-                test_dataloader, DataLoader(train_dataloader.dataset, shuffle=False), times)
-
-    extraction_function = lambda x: torch.max(x, -1)[1].cpu()
-    in_between(model, {"train":train_dataloader, "validation":validation_dataloader}, device, extraction_function)
+   # 
+   #  in_between = Evaluate_time(len_train, len_val, len_test, 
+   #              round(min_train, 2), round(min_val, 2), round(min_test, 2), 
+   #              round(sb_train, 2), round(sb_val, 2), round(sb_test, 2), 
+   #              test_dataloader, DataLoader(train_dataloader.dataset, shuffle=False), times)
+   #
+    from json import dump, load
+    if True:
+        model.eval()
+        output_extraction_function = lambda x: torch.round(.2 + torch.nn.functional.sigmoid(x)).cpu().tolist()
+        train_prediction = model.predict(DataLoader(train_dataloader.dataset, shuffle=False), output_extraction_function, device)
+        validation_prediction = model.predict(validation_dataloader, output_extraction_function, device)
+        test_prediction = model.predict(test_dataloader, output_extraction_function, device)
+        f = open("timeout_predictions.json", "w")
+        dump({"train": train_prediction, "validation":validation_prediction, "test": test_prediction}, f)
+    else:
+        f = open("timeout_predictions.json")
+        preds = load(f)
+        f.close()
+        train_prediction = preds["train"]
+        validation_prediction = preds["validation"]
+        test_prediction = preds["test"]
+    res = analyse_prediction(train_prediction, train_dataloader, times)
+    precision = res['tp'] / (res['tp'] + res['fp'])
+    recall = res['tp'] / (res['tp'] + res['fn'])
+    f1 = 2 * (precision * recall) / (precision + recall)
+    total_timeouts = sum([sum(d[1]["timeouts"]) for d in train_dataloader.dataset])
+    print(f"""train set: 
+    false positive: {res['fp']} false negative: {res['fn']} true positive: {res['tp']} true negative: {res['tn']}. 
+    Just timeouts: {res['jt']} total true timeouts: {total_timeouts}
+    precision: {round(precision,2)} recall: {round(recall,2)} f1: {round(f1,2)}
+    oracles:
+    good oracle: {res['good_oracle']:,.2f} bad oracle: {res['bad_oracle']:,.2f} random oracle: {res['random_oracle']:,.2f}
+    virtual best: {min_train:,.2f} single best: {sb_train:,.2f} 
+    good oracle/vb: {round(res['good_oracle']/min_train,2)} good oracle/sb: {round(res['good_oracle']/sb_train,2)} 
+    bad oracle/vb: {round(res['bad_oracle']/min_train,2)} bad oracle/sb: {round(res['bad_oracle']/sb_train,2)} 
+    random oracle/vb: {round(res['random_oracle']/min_train,2)} random oracle/sb: {round(res['random_oracle']/sb_train,2)} 
+    """)
+    
+    res = analyse_prediction(validation_prediction, validation_dataloader, times[len_train:,:])
+    precision = res['tp'] / (res['tp'] + res['fp'])
+    recall = res['tp'] / (res['tp'] + res['fn'])
+    f1 = 2 * (precision * recall) / (precision + recall)
+    total_timeouts = sum([sum(d[1]["timeouts"]) for d in validation_dataloader.dataset])
+    print(f"""validation set: 
+    false positive: {res['fp']} false negative: {res['fn']} true positive: {res['tp']} true negative: {res['tn']}. 
+    Just timeouts: {res['jt']} total true timeouts: {total_timeouts}
+    precision: {round(precision,2)} recall: {round(recall,2)} f1: {round(f1,2)}
+    oracles:
+    good oracle: {res['good_oracle']:,.2f} bad oracle: {res['bad_oracle']:,.2f} random oracle: {res['random_oracle']:,.2f}
+    virtual best: {min_val:,.2f} single best: {sb_val:,.2f} 
+    good oracle/vb: {round(res['good_oracle']/min_val,2)} good oracle/sb: {round(res['good_oracle']/sb_val,2)} 
+    bad oracle/vb: {round(res['bad_oracle']/min_val,2)} bad oracle/sb: {round(res['bad_oracle']/sb_val,2)} 
+    random oracle/vb: {round(res['random_oracle']/min_val,2)} random oracle/sb: {round(res['random_oracle']/sb_val,2)} 
+    """)    
+        
+    res = analyse_prediction(test_prediction, test_dataloader, times[len_train+len_val:,:])
+    precision = res['tp'] / (res['tp'] + res['fp'])
+    recall = res['tp'] / (res['tp'] + res['fn'])
+    f1 = 2 * (precision * recall) / (precision + recall)
+    total_timeouts = sum([sum(d[1]["timeouts"]) for d in test_dataloader.dataset])
+    print(f"""test set: 
+    false positive: {res['fp']} false negative: {res['fn']} true positive: {res['tp']} true negative: {res['tn']}. 
+    Just timeouts: {res['jt']} total true timeouts: {total_timeouts}
+    precision: {round(precision,2)} recall: {round(recall,2)} f1: {round(f1,2)}
+    oracles:
+    good oracle: {res['good_oracle']:,.2f} bad oracle: {res['bad_oracle']:,.2f} random oracle: {res['random_oracle']:,.2f}
+    virtual best: {min_test:,.2f} single best: {sb_test:,.2f} 
+    good oracle/vb: {round(res['good_oracle']/min_test,2)} good oracle/sb: {round(res['good_oracle']/sb_test,2)} 
+    bad oracle/vb: {round(res['bad_oracle']/min_train,2)} bad oracle/sb: {round(res['bad_oracle']/sb_test,2)} 
+    random oracle/vb: {round(res['random_oracle']/min_test,2)} random oracle/sb: {round(res['random_oracle']/sb_test,2)} 
+    """)                     
 main()

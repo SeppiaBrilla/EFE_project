@@ -4,7 +4,7 @@ import torch
 from neuralNetwork import NeuralNetwork
 
 class Timeout_and_selection_model(NeuralNetwork):
-    def __init__(self, base_model_name, num_classes, intermidiate_size = 100, dropout=.1) -> None:
+    def __init__(self, base_model_name, num_classes, dropout=.1) -> None:
         super().__init__()
         if "FacebookAI/roberta-base" == base_model_name:
             self.bert = RobertaModel.from_pretrained(base_model_name)
@@ -21,9 +21,9 @@ class Timeout_and_selection_model(NeuralNetwork):
 
         self.timeouts_layer = nn.Linear(self.bert.config.hidden_size, num_classes)
 
-        self.intermidiate = nn.Linear(self.bert.config.hidden_size + num_classes, intermidiate_size)
+        self.intermidiate = nn.Linear(self.bert.config.hidden_size + num_classes, num_classes)
 
-        self.model_selection_layer = nn.Linear(intermidiate_size, num_classes)
+        self.model_selection_layer = nn.Linear(num_classes, num_classes)
 
         self.relu = nn.ReLU()
         self.sigmoid = nn.Sigmoid()
@@ -34,7 +34,8 @@ class Timeout_and_selection_model(NeuralNetwork):
         raw_timeouts = self.timeouts_layer(encoded_input)
         timeouts = self.sigmoid(raw_timeouts)
 
-        selection = self.intermidiate(torch.concatenate((encoded_input, timeouts), 1))
+        timeouts = 1 - torch.round(timeouts)
+        selection = self.intermidiate(torch.concatenate((encoded_input, timeouts), 1)) * timeouts
         selection = self.relu(selection)
         return {
             "algorithm_selection": self.model_selection_layer(selection),
