@@ -1,0 +1,8 @@
+\begin{tabular}{llll}
+\toprule
+ & train & validation & test \\
+\midrule
+inst & 9453fb4eed8bef2c174b0b31922b7f20.param & 81720527f72164754425c4705d65bb44.param & 674767f3959b77603d2f9f961bb40cc6.param \\
+prediction_time & 0.227754 & 0.222405 & 0.224378 \\
+\bottomrule
+\end{tabular}
