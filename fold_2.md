@@ -1,8 +1,7 @@
-device : cuda:0
 ## train set
 - good: 340,911.51
-- order: 3,553,438.84
-- chuffed_02_compact.eprime: 5,956,449.56
+- order: 3,553,438.84 (0.59 * sb)
+- chuffed_02_compact.eprime: 5,956,449.56 (sb)
 - or-tools-1_01_compact.eprime: 6,934,460.83
 - or-tools-1_06_chPrunedLevels.eprime: 7,824,226.48
 - chuffed_06_chPrunedLevels.eprime: 8,302,512.98
@@ -22,8 +21,8 @@ device : cuda:0
 - cplex_02_compact.eprime: 297,756,000.00
 ## validation
 - good: 26,146.42
-- order: 436,974.74
-- or-tools-1_01_compact.eprime: 532,968.02
+- order: 436,974.74 (0.81 * sb)
+- or-tools-1_01_compact.eprime: 532,968.02 (sb)
 - chuffed_02_compact.eprime: 646,778.33
 - chuffed_06_chPrunedLevels.eprime: 883,958.00
 - or-tools-1_06_chPrunedLevels.eprime: 886,751.59
@@ -43,8 +42,8 @@ device : cuda:0
 - cplex_02_compact.eprime: 33,192,000.00
 ## test
 - good: 85,261.04
-- order: 540,739.36
-- chuffed_02_compact.eprime: 800,803.34
+- order: 540,739.36 (0.67 * sb)
+- chuffed_02_compact.eprime: 800,803.34 (sb)
 - or-tools-1_01_compact.eprime: 834,258.72
 - or-tools-1_02_compact.eprime: 952,344.82
 - or-tools-1_06_chPrunedLevels.eprime: 1,025,603.35
