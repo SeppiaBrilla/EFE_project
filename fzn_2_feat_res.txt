@@ -1,0 +1,147 @@
+training fold 0
+INFO:root:Init AutoFolio
+INFO:AutoFolio:Given Configuration: Configuration:
+  StandardScaler, Value: True
+  classifier, Value: 'RandomForest'
+  fgroup_all, Value: True
+  imputer_strategy, Value: 'mean'
+  pca, Value: False
+  rf:bootstrap, Value: True
+  rf:criterion, Value: 'gini'
+  rf:max_depth, Value: 2147483648
+  rf:max_features, Value: 'sqrt'
+  rf:min_samples_leaf, Value: 10
+  rf:min_samples_split, Value: 2
+  rf:n_estimators, Value: 10
+  selector, Value: 'PairwiseClassifier'
+
+INFO:PairwiseClassifier:Fit PairwiseClassifier with <class 'autofolio.selector.classifiers.random_forest.RandomForest'>
+Configuration space object:
+  Hyperparameters:
+    StandardScaler, Type: Categorical, Choices: {True, False}, Default: True
+    classifier, Type: Categorical, Choices: {RandomForest, XGBoost}, Default: RandomForest
+    fgroup_all, Type: Categorical, Choices: {True}, Default: True
+    imputer_strategy, Type: Categorical, Choices: {mean, median, most_frequent}, Default: mean
+    pca, Type: Categorical, Choices: {True, False}, Default: False
+    pca_n_components, Type: UniformInteger, Range: [1, 20], Default: 7, on log-scale
+    rf:bootstrap, Type: Categorical, Choices: {True, False}, Default: True
+    rf:criterion, Type: Categorical, Choices: {gini, entropy}, Default: gini
+    rf:max_depth, Type: UniformInteger, Range: [10, 2147483648], Default: 2147483648, on log-scale
+    rf:max_features, Type: Categorical, Choices: {sqrt, log2, None}, Default: sqrt
+    rf:min_samples_leaf, Type: UniformInteger, Range: [2, 100], Default: 10, on log-scale
+    rf:min_samples_split, Type: UniformInteger, Range: [2, 100], Default: 2, on log-scale
+    rf:n_estimators, Type: UniformInteger, Range: [10, 100], Default: 10, on log-scale
+  Conditions:
+    pca_n_components | pca in {True}
+    rf:bootstrap | classifier in {'RandomForest'}
+    rf:criterion | classifier in {'RandomForest'}
+    rf:max_depth | classifier in {'RandomForest'}
+    rf:max_features | classifier in {'RandomForest'}
+    rf:min_samples_leaf | classifier in {'RandomForest'}
+    rf:min_samples_split | classifier in {'RandomForest'}
+    rf:n_estimators | classifier in {'RandomForest'}
+
+
+evaluating fold 0
+97819.34 237677.89 6531714.23
+train-val time: 237677.89
+10982.97 376740.79 872317.0
+test time: 376740.79
+
+training fold 1
+INFO:root:Init AutoFolio
+INFO:AutoFolio:Given Configuration: Configuration:
+  StandardScaler, Value: True
+  classifier, Value: 'RandomForest'
+  fgroup_all, Value: True
+  imputer_strategy, Value: 'mean'
+  pca, Value: False
+  rf:bootstrap, Value: True
+  rf:criterion, Value: 'gini'
+  rf:max_depth, Value: 2147483648
+  rf:max_features, Value: 'sqrt'
+  rf:min_samples_leaf, Value: 10
+  rf:min_samples_split, Value: 2
+  rf:n_estimators, Value: 10
+  selector, Value: 'PairwiseClassifier'
+
+INFO:PairwiseClassifier:Fit PairwiseClassifier with <class 'autofolio.selector.classifiers.random_forest.RandomForest'>
+Configuration space object:
+  Hyperparameters:
+    StandardScaler, Type: Categorical, Choices: {True, False}, Default: True
+    classifier, Type: Categorical, Choices: {RandomForest, XGBoost}, Default: RandomForest
+    fgroup_all, Type: Categorical, Choices: {True}, Default: True
+    imputer_strategy, Type: Categorical, Choices: {mean, median, most_frequent}, Default: mean
+    pca, Type: Categorical, Choices: {True, False}, Default: False
+    pca_n_components, Type: UniformInteger, Range: [1, 20], Default: 7, on log-scale
+    rf:bootstrap, Type: Categorical, Choices: {True, False}, Default: True
+    rf:criterion, Type: Categorical, Choices: {gini, entropy}, Default: gini
+    rf:max_depth, Type: UniformInteger, Range: [10, 2147483648], Default: 2147483648, on log-scale
+    rf:max_features, Type: Categorical, Choices: {sqrt, log2, None}, Default: sqrt
+    rf:min_samples_leaf, Type: UniformInteger, Range: [2, 100], Default: 10, on log-scale
+    rf:min_samples_split, Type: UniformInteger, Range: [2, 100], Default: 2, on log-scale
+    rf:n_estimators, Type: UniformInteger, Range: [10, 100], Default: 10, on log-scale
+  Conditions:
+    pca_n_components | pca in {True}
+    rf:bootstrap | classifier in {'RandomForest'}
+    rf:criterion | classifier in {'RandomForest'}
+    rf:max_depth | classifier in {'RandomForest'}
+    rf:max_features | classifier in {'RandomForest'}
+    rf:min_samples_leaf | classifier in {'RandomForest'}
+    rf:min_samples_split | classifier in {'RandomForest'}
+    rf:n_estimators | classifier in {'RandomForest'}
+
+
+evaluating fold 1
+97985.39 202373.08 6592641.47
+train-val time: 202373.08
+10786.61 230227.18 719066.84
+test time: 230227.18
+training fold 2
+INFO:root:Init AutoFolio
+INFO:AutoFolio:Given Configuration: Configuration:
+  StandardScaler, Value: True
+  classifier, Value: 'RandomForest'
+  fgroup_all, Value: True
+  imputer_strategy, Value: 'mean'
+  pca, Value: False
+  rf:bootstrap, Value: True
+  rf:criterion, Value: 'gini'
+  rf:max_depth, Value: 2147483648
+  rf:max_features, Value: 'sqrt'
+  rf:min_samples_leaf, Value: 10
+  rf:min_samples_split, Value: 2
+  rf:n_estimators, Value: 10
+  selector, Value: 'PairwiseClassifier'
+
+INFO:PairwiseClassifier:Fit PairwiseClassifier with <class 'autofolio.selector.classifiers.random_forest.RandomForest'>
+Configuration space object:
+  Hyperparameters:
+    StandardScaler, Type: Categorical, Choices: {True, False}, Default: True
+    classifier, Type: Categorical, Choices: {RandomForest, XGBoost}, Default: RandomForest
+    fgroup_all, Type: Categorical, Choices: {True}, Default: True
+    imputer_strategy, Type: Categorical, Choices: {mean, median, most_frequent}, Default: mean
+    pca, Type: Categorical, Choices: {True, False}, Default: False
+    pca_n_components, Type: UniformInteger, Range: [1, 20], Default: 7, on log-scale
+    rf:bootstrap, Type: Categorical, Choices: {True, False}, Default: True
+    rf:criterion, Type: Categorical, Choices: {gini, entropy}, Default: gini
+    rf:max_depth, Type: UniformInteger, Range: [10, 2147483648], Default: 2147483648, on log-scale
+    rf:max_features, Type: Categorical, Choices: {sqrt, log2, None}, Default: sqrt
+    rf:min_samples_leaf, Type: UniformInteger, Range: [2, 100], Default: 10, on log-scale
+    rf:min_samples_split, Type: UniformInteger, Range: [2, 100], Default: 2, on log-scale
+    rf:n_estimators, Type: UniformInteger, Range: [10, 100], Default: 10, on log-scale
+  Conditions:
+    pca_n_components | pca in {True}
+    rf:bootstrap | classifier in {'RandomForest'}
+    rf:criterion | classifier in {'RandomForest'}
+    rf:max_depth | classifier in {'RandomForest'}
+    rf:max_features | classifier in {'RandomForest'}
+    rf:min_samples_leaf | classifier in {'RandomForest'}
+    rf:min_samples_split | classifier in {'RandomForest'}
+    rf:n_estimators | classifier in {'RandomForest'}
+
+evaluating fold 2
+98250.54 280449.69 6603227.89
+train-val time: 280449.69
+10587.57 270939.95 800803.34
+test time: 270939.95
