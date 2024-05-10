@@ -1,61 +1,73 @@
 ## train set
-- good: 375,402.05
-- order: 3,419,281.45 (0.57 * sb)
+- Autofolio: 188,460.36
+- Kmeans: 2,489,294.02
+- static ordering time: 5,433,314.83
 - chuffed_02_compact.eprime: 5,945,863.14 (sb)
+- static ordering accuracy: 5,975,652.57
+- static ordering precision: 6,119,639.59
+- static ordering f1: 6,321,812.29
+- static ordering wins: 6,472,578.74
+- static ordering recall: 6,744,866.83
 - or-tools-1_01_compact.eprime: 7,049,652.71
 - or-tools-1_06_chPrunedLevels.eprime: 7,962,273.88
 - chuffed_06_chPrunedLevels.eprime: 8,350,954.45
 - chuffed_01_compact.eprime: 8,418,489.00
 - or-tools-1_02_compact.eprime: 9,476,774.34
-- random: 14,516,690.28
 - kissat_06_chPrunedLevels.eprime: 22,519,566.16
 - kissat_01_compact.eprime: 22,625,853.37
 - kissat_02_compact.eprime: 27,906,301.39
 - cplex_01_compact.eprime: 49,849,082.82
 - cplex_06_chPrunedLevels.eprime: 50,100,788.29
-- bad: 80,001,811.45
 - cplex_05_nochAllLevels_2.eprime: 178,687,527.55
 - chuffed_05_nochAllLevels_2.eprime: 179,024,782.19
 - or-tools-1_05_nochAllLevels_2.eprime: 179,033,583.61
 - kissat_05_nochAllLevels_2.eprime: 181,515,365.20
 - cplex_02_compact.eprime: 297,756,000.00
 ## validation
-- good: 21,615.43
-- order: 338,995.54 (0.63 * sb)
+- Autofolio: 17,876.10
+- Kmeans: 417,788.38
 - or-tools-1_01_compact.eprime: 532,968.02 (sb)
 - chuffed_02_compact.eprime: 646,778.33
+- static ordering time: 647329.56
+- static ordering precision: 814,808.68
+- static ordering accuracy: 814,823.34
 - chuffed_06_chPrunedLevels.eprime: 883,958.00
+- static ordering recall: 859,572.38
 - or-tools-1_06_chPrunedLevels.eprime: 886,751.59
+- static ordering f1: 886,995.52
+- static ordering wins: 889,968.29
 - chuffed_01_compact.eprime: 916,496.05
 - or-tools-1_02_compact.eprime: 986,898.56
-- random: 1,491,790.74
 - kissat_06_chPrunedLevels.eprime: 2,259,160.36
 - kissat_01_compact.eprime: 2,836,197.24
 - kissat_02_compact.eprime: 2,951,015.72
 - cplex_01_compact.eprime: 5,658,439.94
 - cplex_06_chPrunedLevels.eprime: 5,874,328.07
-- bad: 8,429,288.68
 - cplex_05_nochAllLevels_2.eprime: 19,023,551.48
 - or-tools-1_05_nochAllLevels_2.eprime: 19,063,452.31
 - chuffed_05_nochAllLevels_2.eprime: 19,096,286.15
 - kissat_05_nochAllLevels_2.eprime: 19,347,824.51
 - cplex_02_compact.eprime: 33,192,000.00
 ## test
-- good: 44,421.22
-- order: 412,130.81 (0.57 * sb)
-- or-tools-1_01_compact.eprime: 719,066.84 (sb)
-- chuffed_02_compact.eprime: 811,389.76
+- Autofolio: 194,153.84
+- Kmeans: 448,110.77
+- static ordering time: 610489.86
+- static ordering wins: 647329.56
+- or-tools-1_01_compact.eprime: 719,066.84
+- static ordering accuracy: 807,899.58
+- static ordering precision: 807,900.81
+- chuffed_02_compact.eprime: 811,389.76 (sb)
+- static ordering recall: 846,657.58
 - or-tools-1_06_chPrunedLevels.eprime: 887,555.95
+- static ordering f1: 880,018.65
 - chuffed_01_compact.eprime: 1,032,846.02
 - chuffed_06_chPrunedLevels.eprime: 1,033,331.42
 - or-tools-1_02_compact.eprime: 1,095,850.86
-- random: 1,929,083.71
 - kissat_01_compact.eprime: 2,589,181.93
 - kissat_06_chPrunedLevels.eprime: 3,232,849.26
 - kissat_02_compact.eprime: 3,566,190.42
 - cplex_06_chPrunedLevels.eprime: 5,623,629.70
 - cplex_01_compact.eprime: 5,947,492.80
-- bad: 10,023,632.72
 - cplex_05_nochAllLevels_2.eprime: 21,653,310.44
 - chuffed_05_nochAllLevels_2.eprime: 21,654,286.40
 - or-tools-1_05_nochAllLevels_2.eprime: 21,869,383.09
