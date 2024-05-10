@@ -9,7 +9,7 @@ def load_folder(folder:str) -> list[dict]:
     
     for file in files:
         with open(file) as f:
-            jsons.append(json.loads(f.read()))
+            jsons.append(json.loads(f.read().replace("\t","")))
 
     return jsons
 
