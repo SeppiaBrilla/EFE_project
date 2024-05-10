@@ -1,5 +1,6 @@
 import torch.nn as nn
 import torch
+import torch.optim.lr_scheduler as lr_scheduler
 from typing import Any, Tuple, Callable
 from sys import stdout
 
@@ -17,8 +18,9 @@ class NeuralNetwork(nn.Module):
             train_loader:torch.utils.data.DataLoader,
             validation_loader:torch.utils.data.DataLoader,
             optimizer:Any = torch.optim.Adam, 
-            loss_function = nn.CrossEntropyLoss(),
+            loss_function:'Any' = nn.CrossEntropyLoss(),
             learning_rate:float=.1,
+            scheduler:'Callable[[Any], lr_scheduler.LRScheduler]|None' = None,
             epochs:int=10,
             batch_size:'int|None' = None,
             device:'torch.device|str'='cpu',
@@ -59,7 +61,9 @@ class NeuralNetwork(nn.Module):
     else:
       net = self.to(device)
     optimizer = optimizer(net.parameters(), learning_rate)
-
+    lr_schedule = None
+    if scheduler != None:
+        lr_schedule = scheduler(optimizer)
     train_loss_history = []
     val_loss_history = []
 
@@ -122,7 +126,8 @@ class NeuralNetwork(nn.Module):
           stdout.write(out_str)
           stdout.flush()
           print()
-
+        if lr_schedule != None:
+                lr_schedule.step()
         loaders = {"train": train_loader, "validation": validation_loader}
         for in_between in in_between_epochs.keys():
             result = in_between_epochs[in_between](self, loaders, device, output_extraction_function)
@@ -167,7 +172,6 @@ class NeuralNetwork(nn.Module):
         self.__remove(d)
     else:
       del data
-
 
   def __validate(self, loader, metrics, loss_function, device, output_extraction_function, automatically_handle_gpu_memory):
     losses = []
