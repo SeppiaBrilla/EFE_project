@@ -1,4 +1,4 @@
-from .predictor import Predictor
+from .base_predictor import Predictor
 from sys import stderr
 import platform
 import concurrent.futures
@@ -55,10 +55,9 @@ class Autofolio_predictor(Predictor):
             x_header = list(features.columns)
             x_train_file = self.__create_file(features_file)
             x_train_file.write(",".join(x_header) + "\n")
-            x_train = [[datapoint["inst"]] + [str(f) for f in features[features["inst"] == datapoint["inst"]].to_numpy()[0][1:].tolist()] for datapoint in training_data]
+            x_train = [[str(f) for f in features[features["inst"] == datapoint["inst"]].to_numpy()[0].tolist()] for datapoint in training_data]
             self.__save(x_train, x_train_file)
             x_train_file.close()
-
             combinations = sorted(list(training_data[0]["times"].keys()))
             y_header = ["inst"] + combinations
             y_train_file = self.__create_file(times_file)
@@ -69,9 +68,7 @@ class Autofolio_predictor(Predictor):
 
             subprocess.run(
                 ["python", "AutoFolio/scripts/autofolio", 
-                 "--performance_csv", times_file, "--feature_csv", features_file, "--save", pre_trained_model],
-            stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
-
+                 "--performance_csv", times_file, "--feature_csv", features_file, "--save", pre_trained_model])
         self.model = pre_trained_model
         
     def __create_file(self, file_name):
@@ -88,8 +85,10 @@ class Autofolio_predictor(Predictor):
         options = [str(o) for o in options]
         out = subprocess.run(['python3', 'AutoFolio/scripts/autofolio', '--load', self.model, '--feature_vec', f'{" ".join(options)}'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         out = out.stdout.decode('utf-8')
-        out = re.findall(r"\[\('([a-zA-Z0-9.,-_]*)', [0-9]*\)\]", out)[0]
-        return out, times[out]
+        inst = re.findall(r"\[\('([a-zA-Z0-9.,-_]*)', [0-9]*\)\]", out)
+        if len(inst) == 0:
+            raise Exception(out)
+        return out, times[inst[0]]
 
     def predict(self, dataset:'list[dict]', filter:'bool' = False) -> 'tuple[list[dict[str,str|float]],float]':
         """
@@ -109,7 +108,7 @@ class Autofolio_predictor(Predictor):
         predictions = []
         total_time = 0
         with concurrent.futures.ThreadPoolExecutor(self.max_threads) as executor:
-            futures = {executor.submit(self.__get_prediction, datapoint["features"], datapoint["times"]): datapoint["inst"] for datapoint in dataset}
+            futures = {executor.submit(self.__get_prediction,datapoint["features"], datapoint["times"]): datapoint["inst"] for datapoint in dataset}
 
             for future in concurrent.futures.as_completed(futures):
                 text = futures[future]
@@ -118,6 +117,6 @@ class Autofolio_predictor(Predictor):
                     predictions.append({"choosen_option": result[0], "time": result[1]})
                     total_time += result[1]
                 except Exception as e:
-                    print(f"An error occurred for text '{text}': {e}")
+                    print(f"An error occurred for text '{text}': {e}", file=stderr)
 
         return predictions, total_time

@@ -1,4 +1,4 @@
-from .predictor import Predictor
+from .base_predictor import Predictor
 from typing import Callable
 
 class Static_ordering_predictor(Predictor):

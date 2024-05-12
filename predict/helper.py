@@ -1,5 +1,5 @@
 import argparse
-from predictor.predictor import Predictor
+from predictor.base_predictor import Predictor
 from predictor.clustering_predictor import Clustering_predictor
 from predictor.order_predictor import Static_ordering_predictor
 from predictor.autofolio_predictor import Autofolio_predictor

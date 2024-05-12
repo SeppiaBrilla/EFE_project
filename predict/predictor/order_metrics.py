@@ -1,7 +1,7 @@
 from typing import Callable
 import numpy as np
 import pandas as pd
-from .predictor import Predictor
+from .base_predictor import Predictor
 from sklearn.metrics import recall_score, precision_score, accuracy_score, f1_score
 
 class Metrics_predictor(Predictor):

@@ -1,11 +1,11 @@
 import argparse
 from time import time
 import pandas as pd
-import os
+import shutil
 import json
 from helper import get_dataloader, is_competitive, get_sb_vb, positive_int, get_predictor, pad
-from predict.predictor.autofolio_predictor import Autofolio_predictor
-from predict.predictor.clustering_predictor import Clustering_predictor
+from predictor.autofolio_predictor import Autofolio_predictor
+from predictor.clustering_predictor import Clustering_predictor
 
 def get_features(instances, features) -> 'list[dict]':
     return [{
@@ -96,7 +96,7 @@ def main():
             f = open(arguments.save, "w")
             json.dump(predictor.clustering_parameters, f)
         if isinstance(predictor, Autofolio_predictor):
-            os.rename(predictor.model, arguments.save)
+            shutil.copy(predictor.model, arguments.save)
     (sb_train, vb_train), \
     (sb_val, vb_val), \
     (sb_test, vb_test) = get_sb_vb(x_train, x_validation, x_test)
