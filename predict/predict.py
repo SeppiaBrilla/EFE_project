@@ -39,6 +39,7 @@ def build_kwargs(parser, idx2comb, features):
         args["pre_trained_model"] = parser.pre_trained_model
     if not parser.metrics_type is None:
         args["metrics_type"] = parser.metrics_type
+    args["filter"] = parser.filter
     return args
 
 parser = argparse.ArgumentParser()
@@ -102,13 +103,13 @@ def main():
     (sb_test, vb_test) = get_sb_vb(x_train, x_validation, x_test)
 
     mult = 85
-    
+
     start_time = time()
     _, total_time = predictor.predict(train_filtered_options, filter=arguments.filter)
     print("-"*mult)
     if arguments.time:
         print(f"The predictor took {time() - start_time:,.2f} seconds to predict the training set ({len(train_filtered_options)} elements).")
-    sb_perc, vb_perc = total_time / sb_train, total_time / vb_train
+    sb_perc, vb_perc = total_time / (sb_train + 1e-16), total_time / (vb_train + 1e-16)
     vb_train, total_time, sb_train = pad(f"{vb_train:,.2f}", f"{total_time:,.2f}", f"{sb_train:,.2f}")
     print(f"""The final results for the train set are: 
     virtual best:   {vb_train}
@@ -120,7 +121,7 @@ def main():
     print("-"*mult)
     if arguments.time:
         print(f"The predictor took {time() - start_time:,.2f} seconds to predict the validation set ({len(validation_filtered_options)} elements).")
-    sb_perc, vb_perc = total_time / sb_val, total_time / vb_val
+    sb_perc, vb_perc = total_time / (sb_val + 1e-16), total_time / (vb_val + 1e-16)
     vb_val, total_time, sb_val = pad(f"{vb_val:,.2f}", f"{total_time:,.2f}", f"{sb_val:,.2f}")
     print(f"""The final results for the validation set are: 
     virtual best:   {vb_val}
@@ -132,9 +133,9 @@ def main():
     print("-"*mult)
     if arguments.time:
         print(f"The predictor took {time() - start_time:,.2f} seconds to predict the test set ({len(test_filtered_options)} elements).")
-    sb_perc, vb_perc = total_time / sb_test, total_time / vb_test
+    sb_perc, vb_perc = total_time / (sb_test + 1e-16), total_time / (vb_test + 1e-16)
     vb_test, total_time, sb_test = pad(f"{vb_test:,.2f}", f"{total_time:,.2f}", f"{sb_test:,.2f}")
-    print(f"""The final results on the test set are: 
+    print(f"""The final results for the test set are: 
     virtual best:   {vb_test}
     predictor:      {total_time} ({sb_perc:.2f} of single best and {vb_perc:.2f} of virtual best)
     single best:    {sb_test}""")

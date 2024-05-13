@@ -20,7 +20,8 @@ def get_predictor(predictor_type:'str',
         if "features" not in kwargs:
             raise Exception(f"predictor_type {predictor_type} needs features. features cannot be None")
         hyperparameters =  kwargs["hperparameters"] if "hyperparameters" in kwargs else None
-        return Clustering_predictor(training_data=train_data, idx2comb=kwargs["idx2comb"], features=kwargs["features"], hyperparameters=hyperparameters) 
+        return Clustering_predictor(training_data=train_data, idx2comb=kwargs["idx2comb"], features=kwargs["features"], 
+                                    filter=kwargs["filter"], hyperparameters=hyperparameters) 
     elif predictor_type == "autofolio":
         if "features" not in kwargs:
             raise Exception(f"predictor_type {predictor_type} needs features. features cannot be None")

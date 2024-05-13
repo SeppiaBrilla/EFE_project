@@ -9,7 +9,8 @@ class Clustering_predictor(Predictor):
     def __init__(self, training_data:'list[dict]', 
                  idx2comb:'dict[int,str]', 
                  features:'pd.DataFrame', 
-                 hyperparameters:'dict|None' = None
+                 hyperparameters:'dict|None' = None,
+                 filter:'bool' = True
         ) -> 'None':
         """
         initialize an instance of the class Recall_predictor.
@@ -42,7 +43,7 @@ class Clustering_predictor(Predictor):
 
         training_features = np.array([features[features["inst"] == datapoint["inst"]].to_numpy()[0][1:].tolist() for datapoint in train])
         if hyperparameters is None:
-            hyperparameters = self.__get_clustering_parameters(training_features, train, validation, features, idx2comb)
+            hyperparameters = self.__get_clustering_parameters(training_features, train, validation, features, idx2comb, filter)
         self.clustering_parameters = hyperparameters
         self.clustering_model = KMeans(**hyperparameters)
         y_pred = self.clustering_model.fit_predict(training_features)
@@ -58,7 +59,8 @@ class Clustering_predictor(Predictor):
                                     train_data:'list[dict]', 
                                     validation_data:'list[dict]', 
                                     features:'pd.DataFrame',
-                                    idx2comb:'dict') -> 'dict':
+                                    idx2comb:'dict',
+                                    filter:'bool') -> 'dict':
         parameters = list(ParameterGrid({
             'n_clusters': range(2, 21),
             'init': ['k-means++', 'random'],
@@ -81,8 +83,10 @@ class Clustering_predictor(Predictor):
             for datapoint in validation_data:
                 datapoint_features = features[features["inst"] == datapoint["inst"]].to_numpy()[0][1:]
                 preds = kmeans.predict(datapoint_features.reshape(1, -1))
-                datapoint_features = np.round(datapoint_features.tolist())
-                datapoint_candidates = [idx2comb[idx] for idx in idx2comb.keys() if datapoint_features[idx] == 1]
+                datapoint_candidates = list(idx2comb.values())
+                if filter:
+                    datapoint_features = np.round(datapoint_features.tolist())
+                    datapoint_candidates = [idx2comb[idx] for idx in idx2comb.keys() if datapoint_features[idx] == 1]
                 option = self.__get_prediction(datapoint_candidates, int(preds[0]), order)
                 time += datapoint["times"][option]
             clusters_val.append((params, time))
