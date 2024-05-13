@@ -1,6 +1,3 @@
-The predictor took 130.34 seconds to create
--------------------------------------------------------------------------------------
-The predictor took 0.14 seconds to predict the training set (1809 elements).
 The predictor took 130.92 seconds to create
 -------------------------------------------------------------------------------------
 The predictor took 0.12 seconds to predict the training set (1809 elements).

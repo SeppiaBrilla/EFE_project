@@ -69,30 +69,31 @@ def is_competitive(vb, option):
         return (option < 10 or vb * 2 >= option) and option < 3600
 
 def get_sb_vb(train:'list[dict]', validation:'list[dict]', test:'list[dict]') -> 'tuple[tuple[float,float],tuple[float,float],tuple[float,float]]':
-    sb_combination = "chuffed_02_compact.eprime"
     sb_train, sb_val, sb_test = 0, 0, 0
     vb_train, vb_val, vb_test = 0, 0, 0
+    combinations = [t["combination"] for t in train[0]["all_times"]]
+    comb_vals = {comb:0 for comb in combinations}
 
     for datapoint in train:
         vb_train += datapoint["time"]
         for t in datapoint["all_times"]:
-            if t["combination"] == sb_combination:
-                sb_train += t["time"]
-                break
+             comb_vals[t["combination"]] += t["time"]
+    sb_train = min(comb_vals.values())
 
+    comb_vals = {comb:0 for comb in combinations}
     for datapoint in validation:
         vb_val += datapoint["time"]
         for t in datapoint["all_times"]:
-            if t["combination"] == sb_combination:
-                sb_val += t["time"]
-                break
+             comb_vals[t["combination"]] += t["time"]
+    sb_val = min(comb_vals.values())
 
+    comb_vals = {comb:0 for comb in combinations}
     for datapoint in test:
         vb_test += datapoint["time"]
         for t in datapoint["all_times"]:
-            if t["combination"] == sb_combination:
-                sb_test += t["time"]
-                break
+             comb_vals[t["combination"]] += t["time"]
+    sb_test = min(comb_vals.values())
+
     return (sb_train, vb_train), (sb_val, vb_val), (sb_test, vb_test)
 
 def positive_int(value):
