@@ -1,7 +1,9 @@
 ## train:
 - virtual best: 24,626.08 (0.71)
 - autofolio_dnn: 25,218.69 (0.73)
+- autofolio_fzn2feat: 25,809.64 (0.74)
 - kmeans_dnn: 28,317.09 (0.82)
+- kmeans_fzn2feat: 28,387.69 (0.82)
 - kmeans_choice: 28,698.49 (0.83)
 - kissat_01_compact.eprime: 34,669.20 (sb)
 - chuffed_01_compact.eprime: 474,321.54 (13.68)
@@ -10,7 +12,9 @@
 ## validation:
 - virtual best: 4,205.02 (0.86)
 - autofolio_dnn: 4,254.99 (0.87)
+- autofolio_fzn2feat: 4,257.44 (0.87)
 - autofolio_choice: 4,436.59 (0.91)
+- kmeans_fzn2feat: 4,506.89 (0.92)
 - kmeans_dnn: 4,532.89 (0.93)
 - kmeans_choice: 4,588.93 (0.94)
 - kissat_01_compact.eprime: 4,888.05 (sb)
@@ -19,10 +23,12 @@
 - cplex_01_compact.eprime: 2,808,910.38 (574.65)
 ## test:
 - virtual best: 2,968.34 (0.69)
+- autofolio_fzn2feat: 3,198.08 (0.75)
 - autofolio_dnn: 3,434.40 (0.80)
 - kmeans_dnn: 3,473.52 (0.81)
 - autofolio_choice: 3,653.86 (0.85)
 - kissat_01_compact.eprime: 4,288.49 (sb)
+- kmeans_fzn2feat: 6,478.34 (1.51)
 - chuffed_01_compact.eprime: 7,501.73 (1.75)
 - kmeans_choice: 39,531.81 (9.22)
 - or-tools-1_01_compact.eprime: 224,090.61 (52.25)
