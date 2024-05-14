@@ -1,0 +1,19 @@
+The predictor took 780.92 seconds to create
+-------------------------------------------------------------------------------------
+The predictor took 0.12 seconds to predict the training set (1809 elements).
+The final results for the train set are: 
+    virtual best:   24,369.99
+    predictor:      28,398.65 (0.84 of single best and 1.17 of virtual best)
+    single best:    33,907.66
+-------------------------------------------------------------------------------------
+The predictor took 0.01 seconds to predict the validation set (204 elements).
+The final results for the validation set are: 
+    virtual best:   4,205.02
+    predictor:      4,529.22 (0.93 of single best and 1.08 of virtual best)
+    single best:    4,888.05
+-------------------------------------------------------------------------------------
+The predictor took 0.01 seconds to predict the test set (223 elements).
+The final results for the test set are: 
+    virtual best:   3,224.43
+    predictor:      3,477.58 (0.69 of single best and 1.08 of virtual best)
+    single best:    5,050.03

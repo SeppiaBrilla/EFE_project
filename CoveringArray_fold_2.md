@@ -3,6 +3,7 @@
 - autofolio_dnn: 25,009.65 (0.74)
 - autofolio_fzn2feat: 25,572.76 (0.75)
 - autofolio_choiche: 26,323.52 (0.78)
+- kmeans_fzn2feat: 28,398.65 (0.84)
 - kmeans_dnn: 28,609.58 (0.84)
 - kmeans_choice: 28,748.40 (0.85)
 - kissat_01_compact.eprime: 33,907.66 (sb)
@@ -14,6 +15,7 @@
 - autofolio_dnn: 4,259.49 (0.87)
 - autofolio_fzn2feat: 4,261.10 (0.87)
 - autofolio_choiche: 4,353.11 (0.89)
+- kmeans_fzn2feat: 4,529.22 (0.93)
 - kmeans_dnn: 4,531.45 (0.93)
 - kmeans_choice: 4,582.90 (0.94)
 - kissat_01_compact.eprime: 4,888.05 (sb)
@@ -23,6 +25,7 @@
 ## test:
 - virtual best: 3,224.43 (0.64)
 - autofolio_fzn2feat: 3,383.27 (0.67)
+- kmeans_fzn2feat: 3,477.58 (0.69)
 - kmeans_dnn: 3,518.50 (0.70)
 - kmeans_choice: 3,563.95 (0.71)
 - autofolio_dnn: 3,568.23 (0.71)

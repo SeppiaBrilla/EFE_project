@@ -1,0 +1,1 @@
+{"init": "random", "max_iter": 100, "n_clusters": 19, "n_init": 5, "random_state": 42, "tol": 0.0001, "verbose": 0}
