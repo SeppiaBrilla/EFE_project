@@ -1,16 +1,26 @@
-from .base_predictor import Predictor
+from .base_predictor import Predictor, Predictor_initializer
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import ParameterGrid
 from sklearn.cluster import KMeans
+import joblib
+
+class Clustering_initializer(Predictor_initializer):
+    def __init__(self, pretrained_clustering_file_path:'str', order:'dict', idx2comb:'dict') -> None:
+        super().__init__()
+        self.kmeans = joblib.load(pretrained_clustering_file_path)
+        self.order = order
+        self.idx2comb = idx2comb
 
 class Clustering_predictor(Predictor):
 
-    def __init__(self, training_data:'list[dict]', 
-                 idx2comb:'dict[int,str]', 
-                 features:'pd.DataFrame', 
+    MODEL_NAME = "kmeans.pkl"
+
+    def __init__(self, training_data:'list[dict]|None', 
+                 idx2comb:'dict[int,str]|None', 
+                 features:'pd.DataFrame|None', 
                  hyperparameters:'dict|None' = None,
-                 filter:'bool' = True
+                 filter:'bool|None' = True
         ) -> 'None':
         """
         initialize an instance of the class Recall_predictor.
@@ -34,7 +44,8 @@ class Clustering_predictor(Predictor):
         ```
         """
         super().__init__()
-
+        if training_data is None or idx2comb is None or features is None:
+            return
         self.idx2comb = idx2comb
         self.comb2idx = {v:k for k,v in idx2comb.items()}
         TRAIN_ELEMENTS = int(len(training_data) * .9)
@@ -52,7 +63,7 @@ class Clustering_predictor(Predictor):
         for i in range(len(train)):
             for option in train[i]["times"].keys():
                 stats[y_pred[i]][option] += train[i]["times"][option]
-        self.order = {i: {k:v for k, v in sorted(stats[i].items(), key=lambda item: item[1], reverse=False)} for i in cluster_range}
+        self.order = {str(i): {k:v for k, v in sorted(stats[i].items(), key=lambda item: item[1], reverse=False)} for i in cluster_range}
 
     def __get_clustering_parameters(self, 
                                     training_features:'np.ndarray', 
@@ -94,14 +105,36 @@ class Clustering_predictor(Predictor):
         best_cluster_val = min(clusters_val, key=lambda x: x[1])
         return best_cluster_val[0]
 
+    @staticmethod 
+    def from_pretrained(pretrained:'Clustering_initializer') -> 'Clustering_predictor':
+        predictor = Clustering_predictor(None, None, None, None)
+        predictor.idx2comb = pretrained.idx2comb
+        predictor.order = pretrained.order
+        predictor.clustering_model = pretrained.kmeans
+        predictor.clustering_parameters = {
+            'n_clusters': pretrained.kmeans.n_clusters,
+            'init': pretrained.kmeans.init,
+            'max_iter': pretrained.kmeans.max_iter,
+            'tol': pretrained.kmeans.tol,
+            'n_init': pretrained.kmeans.n_init,
+            'random_state': pretrained.kmeans.random_state,
+            'verbose': [0]
+        }
+        return predictor
+
+    def __get_dataset(self, dataset:'list') -> 'list[dict]':
+        if type(dataset[0]) == float:
+            return [{"inst":"", "features":dataset}]
+        return dataset
+
     def __get_prediction(self, options:'list', category:'int', order:'dict|None' = None):
 
         order = order if not order is None else self.order
-        for candidate in order[category]:
+        for candidate in order[str(category)]:
             if candidate in options:
                 return candidate
 
-    def predict(self, dataset:'list[dict]', filter:'bool' = False) -> 'tuple[list[dict[str,str|float]],float]':
+    def predict(self, dataset:'list[dict]|list[float]', filter:'bool'=False) -> 'list[dict]|str':
         """
         Given a dataset, return a list containing each prediction for each datapoint and the sum of the total predicted time.
         -------
@@ -114,10 +147,14 @@ class Clustering_predictor(Predictor):
                 - a list of dicts with, for each datapoint, the chosen option and the corresponding predicted time
                 - a float corresponding to the total time of the predicted options
         """
+
+        is_single = type(dataset[0]) == float
+        dataset = self.__get_dataset(dataset)
+
         if filter and len(dataset[0]["features"]) != len(list(self.idx2comb.keys())):
             raise Exception(f"number of features is different from number of combinations: {len(dataset[0]['features'])} != {len(list(self.idx2comb.keys()))}")
+
         predictions = []
-        total_time = 0
         for datapoint in dataset:
             category = self.clustering_model.predict(np.array(datapoint["features"]).reshape(1,-1))
             options = list(self.idx2comb.values())
@@ -126,8 +163,8 @@ class Clustering_predictor(Predictor):
                 if len(options) == 0:
                     options = list(self.idx2comb.values())
             chosen_option = self.__get_prediction(options, int(category[0]))
-            time = datapoint["times"][chosen_option]
-            total_time += time
-            predictions.append({"choosen_option": chosen_option, "time": time})
+            predictions.append({"choosen_option": chosen_option, "inst": datapoint["inst"]})
 
-        return predictions, total_time
+        if is_single:
+            return predictions[0]["choosen_option"]
+        return predictions

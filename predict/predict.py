@@ -1,11 +1,36 @@
 import argparse
+import joblib
 from time import time
+import os
 import pandas as pd
 import shutil
 import json
-from helper import get_dataloader, is_competitive, get_sb_vb, positive_int, get_predictor, pad
-from predictor.autofolio_predictor import Autofolio_predictor
-from predictor.clustering_predictor import Clustering_predictor
+from helper import is_competitive
+from predictor.base_predictor import Predictor
+from predictor.autofolio_predictor import Autofolio_predictor, Autofolio_initializer
+from predictor.clustering_predictor import Clustering_predictor, Clustering_initializer
+from predictor.order_predictor import Static_ordering_predictor, Static_ordering_initializer
+from predictor.order_metrics import Metrics_predictor, Metrics_initializer
+
+CONFIG_NAME = "config"
+
+def load(name) -> Predictor:
+    f = open(os.path.join(name, CONFIG_NAME))
+    config = json.load(f)
+    if config["predictor_type"] == "autofolio":
+        initializer = Autofolio_initializer(os.path.join(name, Autofolio_predictor.MODEL_NAME), config["max_threads"])
+        return Autofolio_predictor.from_pretrained(initializer)
+    elif config["predictor_type"] == "static":
+        initializer = Static_ordering_initializer(config["order"], config["idx2comb"])
+        return Static_ordering_predictor.from_pretrained(initializer)
+    elif config["predictor_type"] == "metric":
+        initializer = Metrics_initializer(config["order"], config["idx2comb"])
+        return Metrics_predictor.from_pretrained(initializer)
+    elif config["predictor_type"] == "kmeans":
+        initializer = Clustering_initializer(os.path.join(name, Clustering_predictor.MODEL_NAME), config["order"], config["idx2comb"])
+        return Clustering_predictor.from_pretrained(initializer)
+    else:
+        raise Exception(f"predictor_type {config['predictor_type']} unrecognised")
 
 def get_features(instances, features) -> 'list[dict]':
     return [{
@@ -24,121 +49,98 @@ def dnn_filtering(dataset:'list[dict]') -> 'list[dict]':
         })
     return filtered_dataset
 
-def build_kwargs(parser, idx2comb, features):
-    args = {}
-    args["fold"] = parser.split_fold
-    args["idx2comb"] = idx2comb
-    args["features"] = features
-    if not parser.ordering is None:
-        args["ordering_type"] = parser.ordering
-    if not parser.hyperparameters is None:
-        args["hyperparameters"] = parser.hyperparameters
-    if not parser.max_threads is None:
-        args["max_threads"] = parser.max_threads
-    if not parser.pre_trained_model is None:
-        args["pre_trained_model"] = parser.pre_trained_model
-    if not parser.metrics_type is None:
-        args["metrics_type"] = parser.metrics_type
-    args["filter"] = parser.filter
-    return args
-
-parser = argparse.ArgumentParser()
-parser.add_argument("-t", "--type", choices=["static", "kmeans", "autofolio", "metric"], help="the heuristic to use to make a choiche", required=True)
-parser.add_argument("-o", "--ordering", choices=["single_best", "wins"], help="the heuristic to use to make a choiche in the static ordering")
-parser.add_argument("--filter", default=False, help="Whether if the model should use the feature to pre-filter the options or not. Default = False", action='store_true')
-parser.add_argument("-f", "--features", type=str, help="The features to use (in csv format) with the heuristic", required=True)
-parser.add_argument("-d", "--dataset", type=str, help="The dataset to use (in json format)", required=True)
-parser.add_argument("-s", "--split-fold", type=positive_int, help="The fold to use to split the dataset", required=True)
-parser.add_argument("--hyperparameters", type=str, help="A json file containing the hyperparameters to use with the kmeans clustering.", required=False)
-parser.add_argument("--max_threads", type=int, help="The maximum number of threads to use with Autofolio. Default is 12", required=False)
-parser.add_argument("--pre_trained_model", type=str, help="The path to a pre-trained Autofolio model", required=False)
-parser.add_argument("-m", "--metrics_type", type=str, help="The metric to maximise in the metric ordering", choices=["recall", "accuracy", "precision", "f1"], required=False)
-parser.add_argument("--time", default=False, help="Whether the script shoud print the time required to get the predictions or not. Default = False", action='store_true')
-parser.add_argument("--save", help="save file where to store the model/hyperparameters. Used only with kmeans and autofolio", type=str)
-
-def main():
-    arguments = parser.parse_args()
-    f = open(arguments.dataset)
-    dataset = json.load(f)
-    f.close()
-    fold = arguments.split_fold
+def train(arguments):
+    times = pd.read_csv(arguments.times)
     features = pd.read_csv(arguments.features)
-    (x_train, _), (x_validation, _), (x_test, _) = get_dataloader(dataset, dataset, [fold])
-    train_instances = [(x["instance_name"], x["all_times"]) for x in x_train]
-    validation_instances = [(x["instance_name"], x["all_times"]) for x in x_validation]
-    test_instances = [(x["instance_name"], x["all_times"]) for x in x_test]
 
-    train_features = get_features(train_instances, features)
-    validation_features = get_features(validation_instances, features)
-    test_features = get_features(test_instances, features)
+    combinations = list(times.columns)
+    if not "inst" in combinations:
+        raise Exception("The time file does not include a instance column.")
 
-    train_filtered_options = dnn_filtering(train_features)
-    validation_filtered_options = dnn_filtering(validation_features)
-    test_filtered_options = dnn_filtering(test_features)
+    combinations.pop(combinations.index("inst"))
+    idx2comb = {idx:comb for idx, comb in enumerate(combinations)}
+    predictor_type = arguments.type
 
-    idx2comb = {idx:comb for idx, comb in enumerate(sorted([t["combination"] for t in x_train[0]["all_times"]]))}
-
+    if arguments.type in ["static", "metric"] and not len(times.columns) == len(features.columns):
+        raise Exception(f"predictor of type {arguments.type} must filter out the options and to do so, the features must be the same as the number of options")
     train_data = []
-    for datapoint in x_train + x_validation:
+
+    for i in range(len(features)):
+        true_times = times.iloc[i][combinations]
+        vb = min(true_times)
+
         train_data.append({
-            "trues": [0 if is_competitive(datapoint["time"], t["time"]) else 1 for t in sorted(datapoint["all_times"], key=lambda x: x["combination"])],
-            "inst": datapoint["instance_name"],
-            "times": {t["combination"]:t["time"] for t in datapoint["all_times"]}
+            "trues": [0 if is_competitive(vb, t) else 1 for t in true_times],
+            "inst": times.iloc[i]["inst"],
+            "times": true_times,
         })
 
-    args = build_kwargs(arguments, idx2comb, features)
     start_time = time()
-    predictor = get_predictor(arguments.type, train_data, **args)
+    data_to_save = {"idx2comb":idx2comb, "predictor_type":predictor_type}
+    if predictor_type == "static":
+        if arguments.ordering is None:
+            raise Exception(f"predictor_type {predictor_type} needs an ordering type. ordering_type cannot be None")
+        predictor = Static_ordering_predictor(idx2comb=idx2comb, training_data=train_data, ordering_type=arguments.ordering)
+        data_to_save["order"] = predictor.order
+    elif predictor_type == "kmeans":
+        predictor = Clustering_predictor(training_data=train_data, idx2comb=idx2comb, features=features,filter=arguments.filter) 
+        data_to_save["order"] = predictor.order
+    elif predictor_type == "autofolio":
+        predictor = Autofolio_predictor(training_data=train_data, features=features, max_threads=arguments.max_threads)
+        data_to_save["max_threads"] = predictor.max_threads
+    elif predictor_type == "metric":
+        if arguments.metrics_type is None:
+            raise Exception(f"predictor_type {predictor_type} needs a metric type. metrics_type cannot be None")
+        predictor = Metrics_predictor(training_data=train_data, idx2comb=idx2comb, features=features, metrics_type=arguments.metrics_type)
+        data_to_save["order"] = predictor.order
+    else:
+        raise Exception(f"predictor_type {predictor_type} unrecognised")
+
     if arguments.time:
         print(f"The predictor took {time() - start_time:,.2f} seconds to create")
 
-    if not arguments.save is None:
-        if isinstance(predictor, Clustering_predictor):
-            f = open(arguments.save, "w")
-            json.dump(predictor.clustering_parameters, f)
-        if isinstance(predictor, Autofolio_predictor):
-            shutil.copy(predictor.model, arguments.save)
-    (sb_train, vb_train), \
-    (sb_val, vb_val), \
-    (sb_test, vb_test) = get_sb_vb(x_train, x_validation, x_test)
+    if not os.path.isdir(arguments.name):
+        os.mkdir(arguments.name)
+    f = open(os.path.join(arguments.name, CONFIG_NAME), "w")
+    json.dump(data_to_save, f)
+    if predictor_type == "autofolio":
+        shutil.copy(predictor.model, os.path.join(arguments.name, Autofolio_predictor.MODEL_NAME))
+    if predictor_type == "kmeans":
+        joblib.dump(predictor.clustering_model, os.path.join(arguments.name, Clustering_predictor.MODEL_NAME))
 
-    mult = 85
+def predict(args):
+    predictor = load(args.name)
+    features = args.features
+    if "," in features:
+        features = [float(v) for v in features.split(",")]
+        print(predictor.predict(features))
+    elif os.path.exists(features):
+        df = pd.read_csv(features)
+        instances = df["inst"].to_list()
+        features = [{"inst": inst, "features": df[df["inst"] == inst].to_numpy()[0].tolist()[1:]} for inst in instances]
+        predictions = predictor.predict(features)
+        for prediction in predictions:
+            print(f"{prediction['inst']}:   {prediction['choosen_option']}")
+    
 
-    start_time = time()
-    _, total_time = predictor.predict(train_filtered_options, filter=arguments.filter)
-    print("-"*mult)
-    if arguments.time:
-        print(f"The predictor took {time() - start_time:,.2f} seconds to predict the training set ({len(train_filtered_options)} elements).")
-    sb_perc, vb_perc = total_time / (sb_train + 1e-16), total_time / (vb_train + 1e-16)
-    vb_train, total_time, sb_train = pad(f"{vb_train:,.2f}", f"{total_time:,.2f}", f"{sb_train:,.2f}")
-    print(f"""The final results for the train set are: 
-    virtual best:   {vb_train}
-    predictor:      {total_time} ({sb_perc:.2f} of single best and {vb_perc:.2f} of virtual best)
-    single best:    {sb_train}""")
+parser = argparse.ArgumentParser()
+parser.add_argument("-m", "--mode", choices=["train", "predict"], help="mode for the script. train: train a classifier, predict (default): predict using a classifier", default="predict")
+parser.add_argument("--type", choices=["static", "kmeans", "autofolio", "metric"], help="the heuristic to use to make a choiche", required=False)
+parser.add_argument("-t", "--times", type=str, help="The times of each option to use in the training process", required=False)
+parser.add_argument("-o", "--ordering", choices=["single_best", "wins"], help="the heuristic to use to make a choiche in the static ordering")
+parser.add_argument("--filter", default=False, help="Whether if the model should use the feature to pre-filter the options or not. Default = False", action='store_true')
+parser.add_argument("-f", "--features", type=str, help="The features to use with the heuristic. It must be either a csv file or a comma separated list of values to use as features", required=True)
+parser.add_argument("--metrics_type", type=str, help="The metric to maximise in the metric ordering", choices=["recall", "accuracy", "precision", "f1"], required=False)
+parser.add_argument("--max_threads", help="The number of threads to use during the prediction with autofolio", type=int, default=12)
+parser.add_argument("--time", default=False, help="Whether the script shoud print the time required to get the predictions or not. Default = False", action='store_true')
+parser.add_argument("-n", "--name", help="File name to use for the predictor", type=str, required=True)
 
-    start_time = time()
-    _, total_time = predictor.predict(validation_filtered_options, filter=arguments.filter)
-    print("-"*mult)
-    if arguments.time:
-        print(f"The predictor took {time() - start_time:,.2f} seconds to predict the validation set ({len(validation_filtered_options)} elements).")
-    sb_perc, vb_perc = total_time / (sb_val + 1e-16), total_time / (vb_val + 1e-16)
-    vb_val, total_time, sb_val = pad(f"{vb_val:,.2f}", f"{total_time:,.2f}", f"{sb_val:,.2f}")
-    print(f"""The final results for the validation set are: 
-    virtual best:   {vb_val}
-    predictor:      {total_time} ({sb_perc:.2f} of single best and {vb_perc:.2f} of virtual best)
-    single best:    {sb_val}""")
-
-    start_time = time()
-    _, total_time = predictor.predict(test_filtered_options, filter=arguments.filter)
-    print("-"*mult)
-    if arguments.time:
-        print(f"The predictor took {time() - start_time:,.2f} seconds to predict the test set ({len(test_filtered_options)} elements).")
-    sb_perc, vb_perc = total_time / (sb_test + 1e-16), total_time / (vb_test + 1e-16)
-    vb_test, total_time, sb_test = pad(f"{vb_test:,.2f}", f"{total_time:,.2f}", f"{sb_test:,.2f}")
-    print(f"""The final results for the test set are: 
-    virtual best:   {vb_test}
-    predictor:      {total_time} ({sb_perc:.2f} of single best and {vb_perc:.2f} of virtual best)
-    single best:    {sb_test}""")
+def main():
+    args = parser.parse_args()
+    if args.mode == "predict":
+        predict(args)
+    elif args.mode == "train":
+        train(args)
 
 if __name__ == "__main__":
     main()

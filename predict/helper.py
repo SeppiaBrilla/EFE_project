@@ -27,7 +27,7 @@ def get_predictor(predictor_type:'str',
             raise Exception(f"predictor_type {predictor_type} needs features. features cannot be None")
         max_threads = kwargs["max_threads"] if "max_threads" in kwargs else 12
         pre_trained_model = kwargs["pre_trained_model"] if "pre_trained_model" in kwargs else None
-        return Autofolio_predictor(training_data=train_data, features=kwargs["features"], fold=kwargs["fold"], max_threads=max_threads, pre_trained_model=pre_trained_model)
+        return Autofolio_predictor(training_data=train_data, features=kwargs["features"], max_threads=max_threads, pre_trained_model=pre_trained_model)
     elif predictor_type == "metric":
         if "features" not in kwargs:
             raise Exception(f"predictor_type {predictor_type} needs features. features cannot be None")

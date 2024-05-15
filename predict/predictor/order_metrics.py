@@ -1,14 +1,21 @@
 from typing import Callable
 import numpy as np
 import pandas as pd
-from .base_predictor import Predictor
+from .base_predictor import Predictor, Predictor_initializer
 from sklearn.metrics import recall_score, precision_score, accuracy_score, f1_score
+
+class Metrics_initializer(Predictor_initializer):
+    def __init__(self, order:'list[str]', idx2comb:'dict') -> None:
+        super().__init__()
+        self.order = order
+        self.idx2comb = idx2comb
+        self.comb2idx = {v:k for k,v in idx2comb.items()}
 
 class Metrics_predictor(Predictor):
 
-    def __init__(self, training_data:'list[dict]', 
-                 idx2comb:'dict[int,str]',
-                 features:'pd.DataFrame', 
+    def __init__(self, training_data:'list[dict]|None', 
+                 idx2comb:'dict[int,str]|None',
+                 features:'pd.DataFrame|None', 
                  metrics_type:'Literal["recall","precision","f1","accuracy"]|Callable' = "recall"
         ) -> 'None':
         """
@@ -33,6 +40,8 @@ class Metrics_predictor(Predictor):
         ```
         """
         super().__init__()
+        if training_data is None or idx2comb is None or features is None:
+            return
 
         self.idx2comb = idx2comb
         self.comb2idx = {v:k for k,v in idx2comb.items()}
@@ -50,6 +59,15 @@ class Metrics_predictor(Predictor):
             metric_value[idx2comb[i]] = metric(true_values[:,i], predicted_values[:,i])
 
         self.order = [k for k, _ in sorted(metric_value.items(), key =lambda x: x[1],  reverse=True)]
+    
+
+    @staticmethod
+    def from_pretrained(pretrained:'Metrics_initializer') -> 'Metrics_predictor':
+        predictor = Metrics_predictor(None, None, None)
+        predictor.order = pretrained.order
+        predictor.idx2comb = pretrained.idx2comb
+        predictor.comb2idx = pretrained.comb2idx
+        return predictor
 
     def __get_metric(self, metric) -> 'Callable':
         if metric == "recall":
@@ -70,7 +88,12 @@ class Metrics_predictor(Predictor):
                 if candidate in options:
                     return candidate
 
-    def predict(self, dataset:'list[dict]', filter:'bool' = False) -> 'tuple[list[dict[str,str|float]],float]':
+    def __get_dataset(self, dataset:'list') -> 'list[dict]':
+        if type(dataset[0]) == float:
+            return [{"inst":"", "features":dataset}]
+        return dataset
+
+    def predict(self, dataset:'list[dict]|list[float]', filter:'bool'=False) -> 'list[dict]|str':
         """
         Given a dataset, return a list containing each prediction for each datapoint and the sum of the total predicted time.
         -------
@@ -83,11 +106,14 @@ class Metrics_predictor(Predictor):
                 - a list of dicts with, for each datapoint, the chosen option and the corresponding predicted time
                 - a float corresponding to the total time of the predicted options
         """
+
+        is_single = type(dataset[0]) == float
+        dataset = self.__get_dataset(dataset)
+
         if len(dataset[0]["features"]) != len(list(self.idx2comb.keys())):
             raise Exception(f"number of features is different from number of combinations: {len(dataset[0]['features'])} != {len(list(self.idx2comb.keys()))}")
 
         predictions = []
-        total_time = 0
         for datapoint in dataset:
             options = list(self.idx2comb.values())
             if filter:
@@ -95,9 +121,10 @@ class Metrics_predictor(Predictor):
                 if len(options) == 0:
                     options = list(self.idx2comb.values())
             chosen_option = self.__get_prediction(options)
-            time = datapoint["times"][chosen_option]
-            total_time += time
-            predictions.append({"choosen_option": chosen_option, "time": time})
+            predictions.append({"choosen_option": chosen_option, "inst": datapoint["inst"]})
 
-        return predictions, total_time
+        if is_single:
+            return predictions[0]["choosen_option"]
+
+        return predictions
 

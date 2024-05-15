@@ -1,4 +1,4 @@
-from .base_predictor import Predictor
+from .base_predictor import Predictor, Predictor_initializer
 from sys import stderr
 import platform
 import concurrent.futures
@@ -7,13 +7,19 @@ import subprocess
 import pandas as pd
 import os
 
-class Autofolio_predictor(Predictor):
+class Autofolio_initializer(Predictor_initializer):
+    def __init__(self, model:'str', max_threads:'int') -> None:
+        super().__init__()
+        self.model = model
+        self.max_threads = max_threads
 
+class Autofolio_predictor(Predictor):
+    
+    MODEL_NAME = "autofolio_random_forest_model"
     CACHE_DIR = ".cache"
 
-    def __init__(self, training_data:'list[dict]', 
-                 features:'pd.DataFrame', 
-                 fold:'int',
+    def __init__(self, training_data:'list[dict]|None', 
+                 features:'pd.DataFrame|None', 
                  max_threads:'int' = 12,
                  pre_trained_model:'str|None' = None
         ) -> 'None':
@@ -40,17 +46,19 @@ class Autofolio_predictor(Predictor):
         """
 
         super().__init__()
-
+        if training_data is None or features is None:
+            return
         if "3.6" not in platform.python_version():
             raise Exception(f"AUtofolio works only on python version 3.6.x. found {platform.python_version()}")
+
         self.max_threads = max_threads
         if pre_trained_model is None:
             if not os.path.isdir(self.CACHE_DIR):
                 os.makedirs(self.CACHE_DIR)
 
-            times_file = os.path.join(self.CACHE_DIR, f"train_times_fold_{fold}.csv")
-            pre_trained_model = os.path.join(self.CACHE_DIR, f"fzn_feat_fold_{fold}")
-            features_file = os.path.join(self.CACHE_DIR, f"train_features_fold_{fold}.csv")
+            times_file = os.path.join(self.CACHE_DIR, f"train_times.csv")
+            pre_trained_model = os.path.join(self.CACHE_DIR, self.MODEL_NAME)
+            features_file = os.path.join(self.CACHE_DIR, f"train_features.csv")
 
             x_header = list(features.columns)
             x_train_file = self.__create_file(features_file)
@@ -70,7 +78,14 @@ class Autofolio_predictor(Predictor):
                 ["python", "AutoFolio/scripts/autofolio", 
                  "--performance_csv", times_file, "--feature_csv", features_file, "--save", pre_trained_model])
         self.model = pre_trained_model
-        
+
+    @staticmethod
+    def from_pretrained(pretrained:'Autofolio_initializer') -> 'Autofolio_predictor':
+        predictor = Autofolio_predictor(None, None)
+        predictor.model = pretrained.model
+        predictor.max_threads = pretrained.max_threads
+        return predictor
+
     def __create_file(self, file_name):
         f = open(file_name, "w")
         f.write("")
@@ -81,16 +96,21 @@ class Autofolio_predictor(Predictor):
         for d in data:
             file.write(f"{','.join(d)}\n")
 
-    def __get_prediction(self, options:'list', times:'dict[str,float]'):
+    def __get_prediction(self, options:'list', inst:'str'):
         options = [str(o) for o in options]
         out = subprocess.run(['python3', 'AutoFolio/scripts/autofolio', '--load', self.model, '--feature_vec', f'{" ".join(options)}'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         out = out.stdout.decode('utf-8')
-        inst = re.findall(r"\[\('([a-zA-Z0-9.,-_]*)', [0-9]*\)\]", out)
-        if len(inst) == 0:
+        choosen_option = re.findall(r"\[\('([a-zA-Z0-9.,-_]*)', [0-9]*\)\]", out)
+        if len(choosen_option) == 0:
             raise Exception(out)
-        return out, times[inst[0]]
+        return choosen_option[0], inst
 
-    def predict(self, dataset:'list[dict]', filter:'bool' = False) -> 'tuple[list[dict[str,str|float]],float]':
+    def __get_dataset(self, dataset:'list') -> 'list[dict]':
+        if type(dataset[0]) == float:
+            return [{"inst":"", "features":dataset}]
+        return dataset
+
+    def predict(self, dataset:'list[dict]|list[float]', filter:'bool'=False) -> 'list[dict]|str':
         """
         Given a dataset, return a list containing each prediction for each datapoint and the sum of the total predicted time.
         -------
@@ -103,20 +123,24 @@ class Autofolio_predictor(Predictor):
                 - a list of dicts with, for each datapoint, the chosen option and the corresponding predicted time
                 - a float corresponding to the total time of the predicted options
         """
+
+        is_single = type(dataset[0]) == float
+        dataset = self.__get_dataset(dataset)
+
         if filter != False:
             print("WARNING: predictor Autofolio cannot pre-filter option", file=stderr)
         predictions = []
-        total_time = 0
         with concurrent.futures.ThreadPoolExecutor(self.max_threads) as executor:
-            futures = {executor.submit(self.__get_prediction,datapoint["features"], datapoint["times"]): datapoint["inst"] for datapoint in dataset}
+            futures = {executor.submit(self.__get_prediction,datapoint["features"], datapoint["inst"]): datapoint["inst"] for datapoint in dataset}
 
             for future in concurrent.futures.as_completed(futures):
                 text = futures[future]
                 try:
                     result = future.result()
-                    predictions.append({"choosen_option": result[0], "time": result[1]})
-                    total_time += result[1]
+                    predictions.append({"choosen_option": result[0], "inst": result[1]})
                 except Exception as e:
                     print(f"An error occurred for text '{text}': {e}", file=stderr)
 
-        return predictions, total_time
+        if is_single:
+            return predictions[0]["choosen_option"]
+        return predictions
