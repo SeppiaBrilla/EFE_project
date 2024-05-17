@@ -1,0 +1,11 @@
+model,epoch_time,mean_competitive,median_competitive,all_options,sb/vb
+Transshipment,4075,7.54,7,16,0.9
+SocialGolfers,113,3.43,3,16,0.65
+AbnormalMagicHexagons,115,3.9,3,4,0.68
+CarSequencing,7003,10.16,10,16,0.9
+CarSequencing,7003,6.13,6,16,0.01
+CarSequencing,7003,6.13,6,16,0.01
+VesselLoading,1983,3.51,3,16,0.97
+CoveringArray,205,3.0,3,4,0.73
+EFPA,328,1.92,1,16,0.67
+TailAssignment,2218,6.03,6,16,0.99
