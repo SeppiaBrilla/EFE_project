@@ -100,10 +100,10 @@ class Autofolio_predictor(Predictor):
         options = [str(o) for o in options]
         out = subprocess.run(['python3', 'AutoFolio/scripts/autofolio', '--load', self.model, '--feature_vec', f'{" ".join(options)}'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         out = out.stdout.decode('utf-8')
-        choosen_option = re.findall(r"\[\('([a-zA-Z0-9.,-_]*)', [0-9]*\)\]", out)
-        if len(choosen_option) == 0:
+        chosen_option = re.findall(r"\[\('([a-zA-Z0-9.,-_]*)', [0-9]*\)\]", out)
+        if len(chosen_option) == 0:
             raise Exception(out)
-        return choosen_option[0], inst
+        return chosen_option[0], inst
 
     def __get_dataset(self, dataset:'list') -> 'list[dict]':
         if type(dataset[0]) == float:
@@ -137,10 +137,10 @@ class Autofolio_predictor(Predictor):
                 text = futures[future]
                 try:
                     result = future.result()
-                    predictions.append({"choosen_option": result[0], "inst": result[1]})
+                    predictions.append({"chosen_option": result[0], "inst": result[1]})
                 except Exception as e:
                     print(f"An error occurred for text '{text}': {e}", file=stderr)
 
         if is_single:
-            return predictions[0]["choosen_option"]
+            return predictions[0]["chosen_option"]
         return predictions

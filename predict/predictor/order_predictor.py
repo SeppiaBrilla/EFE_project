@@ -114,8 +114,8 @@ class Static_ordering_predictor(Predictor):
                 if len(options) == 0:
                     options = list(self.idx2comb.values())
             chosen_option = self.__get_prediction(options)
-            predictions.append({"choosen_option": chosen_option, "inst": datapoint["inst"]})
+            predictions.append({"chosen_option": chosen_option, "inst": datapoint["inst"]})
 
         if is_single:
-            return predictions[0]["choosen_option"]
+            return predictions[0]["chosen_option"]
         return predictions
