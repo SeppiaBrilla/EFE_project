@@ -1,0 +1,310 @@
+CarSequencing
+Some weights of LongformerModel were not initialized from the model checkpoint at tororoin/longformer-8bitadam-2048-main and are newly initialized: ['longformer.pooler.dense.bias', 'longformer.pooler.dense.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+operating on device: cuda:0
+
+batch 1/4135 ----- loss:      1.681 ----- accuracy:      0.312 ----- f1_score:      0.312 ----- precision:      0.346 ----- recall:      0.346
+batch 17/4135 ----- loss:      1.608 ----- accuracy:      0.436 ----- f1_score:      0.435 ----- precision:      0.445 ----- recall:      0.446
+batch 33/4135 ----- loss:      1.711 ----- accuracy:      0.611 ----- f1_score:      0.610 ----- precision:      0.643 ----- recall:      0.635
+batch 49/4135 ----- loss:      1.900 ----- accuracy:      0.674 ----- f1_score:      0.674 ----- precision:      0.703 ----- recall:      0.702
+batch 65/4135 ----- loss:      1.326 ----- accuracy:      0.729 ----- f1_score:      0.728 ----- precision:      0.750 ----- recall:      0.754
+batch 81/4135 ----- loss:      1.384 ----- accuracy:      0.748 ----- f1_score:      0.748 ----- precision:      0.764 ----- recall:      0.767
+batch 97/4135 ----- loss:      1.495 ----- accuracy:      0.688 ----- f1_score:      0.686 ----- precision:      0.709 ----- recall:      0.722
+batch 113/4135 ----- loss:      1.188 ----- accuracy:      0.762 ----- f1_score:      0.762 ----- precision:      0.776 ----- recall:      0.778
+batch 129/4135 ----- loss:      1.263 ----- accuracy:      0.738 ----- f1_score:      0.738 ----- precision:      0.755 ----- recall:      0.762
+batch 145/4135 ----- loss:      1.477 ----- accuracy:      0.771 ----- f1_score:      0.771 ----- precision:      0.779 ----- recall:      0.775
+batch 161/4135 ----- loss:      1.402 ----- accuracy:      0.719 ----- f1_score:      0.719 ----- precision:      0.730 ----- recall:      0.729
+batch 177/4135 ----- loss:      1.187 ----- accuracy:      0.770 ----- f1_score:      0.769 ----- precision:      0.785 ----- recall:      0.789
+batch 193/4135 ----- loss:      1.208 ----- accuracy:      0.723 ----- f1_score:      0.721 ----- precision:      0.743 ----- recall:      0.756
+batch 209/4135 ----- loss:      1.204 ----- accuracy:      0.693 ----- f1_score:      0.692 ----- precision:      0.713 ----- recall:      0.725
+batch 225/4135 ----- loss:      1.102 ----- accuracy:      0.715 ----- f1_score:      0.714 ----- precision:      0.733 ----- recall:      0.741
+batch 241/4135 ----- loss:      1.692 ----- accuracy:      0.713 ----- f1_score:      0.713 ----- precision:      0.727 ----- recall:      0.731
+batch 257/4135 ----- loss:      1.111 ----- accuracy:      0.752 ----- f1_score:      0.752 ----- precision:      0.764 ----- recall:      0.763
+batch 273/4135 ----- loss:      1.199 ----- accuracy:      0.729 ----- f1_score:      0.728 ----- precision:      0.744 ----- recall:      0.748
+batch 289/4135 ----- loss:      1.331 ----- accuracy:      0.773 ----- f1_score:      0.773 ----- precision:      0.785 ----- recall:      0.784
+batch 305/4135 ----- loss:      1.540 ----- accuracy:      0.717 ----- f1_score:      0.716 ----- precision:      0.733 ----- recall:      0.740
+batch 321/4135 ----- loss:      1.505 ----- accuracy:      0.715 ----- f1_score:      0.714 ----- precision:      0.731 ----- recall:      0.736
+batch 337/4135 ----- loss:      1.023 ----- accuracy:      0.709 ----- f1_score:      0.707 ----- precision:      0.730 ----- recall:      0.745
+batch 353/4135 ----- loss:      0.995 ----- accuracy:      0.807 ----- f1_score:      0.806 ----- precision:      0.815 ----- recall:      0.811
+batch 369/4135 ----- loss:      1.208 ----- accuracy:      0.771 ----- f1_score:      0.770 ----- precision:      0.774 ----- recall:      0.770
+batch 385/4135 ----- loss:      2.041 ----- accuracy:      0.713 ----- f1_score:      0.713 ----- precision:      0.727 ----- recall:      0.731
+batch 401/4135 ----- loss:      1.038 ----- accuracy:      0.746 ----- f1_score:      0.745 ----- precision:      0.765 ----- recall:      0.778
+batch 417/4135 ----- loss:      1.183 ----- accuracy:      0.791 ----- f1_score:      0.790 ----- precision:      0.795 ----- recall:      0.791
+batch 433/4135 ----- loss:      0.714 ----- accuracy:      0.773 ----- f1_score:      0.773 ----- precision:      0.784 ----- recall:      0.782
+batch 449/4135 ----- loss:      0.889 ----- accuracy:      0.752 ----- f1_score:      0.752 ----- precision:      0.769 ----- recall:      0.777
+batch 465/4135 ----- loss:      0.844 ----- accuracy:      0.717 ----- f1_score:      0.717 ----- precision:      0.730 ----- recall:      0.733
+batch 481/4135 ----- loss:      1.380 ----- accuracy:      0.750 ----- f1_score:      0.750 ----- precision:      0.761 ----- recall:      0.761
+batch 497/4135 ----- loss:      1.069 ----- accuracy:      0.697 ----- f1_score:      0.697 ----- precision:      0.715 ----- recall:      0.722
+batch 513/4135 ----- loss:      0.975 ----- accuracy:      0.707 ----- f1_score:      0.706 ----- precision:      0.726 ----- recall:      0.736
+batch 529/4135 ----- loss:      1.368 ----- accuracy:      0.721 ----- f1_score:      0.721 ----- precision:      0.735 ----- recall:      0.739
+batch 545/4135 ----- loss:      1.374 ----- accuracy:      0.727 ----- f1_score:      0.726 ----- precision:      0.743 ----- recall:      0.750
+batch 561/4135 ----- loss:      1.001 ----- accuracy:      0.734 ----- f1_score:      0.734 ----- precision:      0.742 ----- recall:      0.739
+batch 577/4135 ----- loss:      1.478 ----- accuracy:      0.719 ----- f1_score:      0.718 ----- precision:      0.738 ----- recall:      0.750
+batch 593/4135 ----- loss:      0.903 ----- accuracy:      0.660 ----- f1_score:      0.648 ----- precision:      0.683 ----- recall:      0.731
+batch 609/4135 ----- loss:      0.836 ----- accuracy:      0.711 ----- f1_score:      0.705 ----- precision:      0.723 ----- recall:      0.751
+batch 625/4135 ----- loss:      0.922 ----- accuracy:      0.725 ----- f1_score:      0.723 ----- precision:      0.739 ----- recall:      0.753
+batch 641/4135 ----- loss:      1.453 ----- accuracy:      0.727 ----- f1_score:      0.726 ----- precision:      0.739 ----- recall:      0.743
+batch 657/4135 ----- loss:      1.106 ----- accuracy:      0.732 ----- f1_score:      0.732 ----- precision:      0.741 ----- recall:      0.739
+batch 673/4135 ----- loss:      1.092 ----- accuracy:      0.777 ----- f1_score:      0.777 ----- precision:      0.788 ----- recall:      0.798
+batch 689/4135 ----- loss:      1.106 ----- accuracy:      0.785 ----- f1_score:      0.781 ----- precision:      0.785 ----- recall:      0.807
+batch 705/4135 ----- loss:      1.179 ----- accuracy:      0.801 ----- f1_score:      0.793 ----- precision:      0.789 ----- recall:      0.811
+batch 721/4135 ----- loss:      0.852 ----- accuracy:      0.799 ----- f1_score:      0.799 ----- precision:      0.799 ----- recall:      0.799
+batch 737/4135 ----- loss:      0.829 ----- accuracy:      0.824 ----- f1_score:      0.819 ----- precision:      0.816 ----- recall:      0.826
+batch 753/4135 ----- loss:      2.165 ----- accuracy:      0.707 ----- f1_score:      0.628 ----- precision:      0.662 ----- recall:      0.622
+batch 769/4135 ----- loss:      0.995 ----- accuracy:      0.686 ----- f1_score:      0.656 ----- precision:      0.693 ----- recall:      0.658
+batch 785/4135 ----- loss:      1.941 ----- accuracy:      0.732 ----- f1_score:      0.732 ----- precision:      0.747 ----- recall:      0.756
+batch 801/4135 ----- loss:      1.167 ----- accuracy:      0.770 ----- f1_score:      0.769 ----- precision:      0.773 ----- recall:      0.769
+batch 817/4135 ----- loss:      1.417 ----- accuracy:      0.754 ----- f1_score:      0.754 ----- precision:      0.769 ----- recall:      0.774
+batch 833/4135 ----- loss:      1.587 ----- accuracy:      0.730 ----- f1_score:      0.730 ----- precision:      0.742 ----- recall:      0.742
+batch 849/4135 ----- loss:      0.781 ----- accuracy:      0.703 ----- f1_score:      0.702 ----- precision:      0.718 ----- recall:      0.727
+batch 865/4135 ----- loss:      0.783 ----- accuracy:      0.717 ----- f1_score:      0.716 ----- precision:      0.725 ----- recall:      0.729
+batch 881/4135 ----- loss:      0.783 ----- accuracy:      0.848 ----- f1_score:      0.842 ----- precision:      0.837 ----- recall:      0.870
+batch 897/4135 ----- loss:      0.752 ----- accuracy:      0.873 ----- f1_score:      0.869 ----- precision:      0.866 ----- recall:      0.876
+batch 913/4135 ----- loss:      0.603 ----- accuracy:      0.855 ----- f1_score:      0.854 ----- precision:      0.853 ----- recall:      0.857
+batch 929/4135 ----- loss:      1.527 ----- accuracy:      0.883 ----- f1_score:      0.880 ----- precision:      0.879 ----- recall:      0.881
+batch 945/4135 ----- loss:      1.037 ----- accuracy:      0.865 ----- f1_score:      0.865 ----- precision:      0.866 ----- recall:      0.864
+batch 961/4135 ----- loss:      0.681 ----- accuracy:      0.938 ----- f1_score:      0.932 ----- precision:      0.935 ----- recall:      0.929
+batch 977/4135 ----- loss:      1.288 ----- accuracy:      0.850 ----- f1_score:      0.836 ----- precision:      0.837 ----- recall:      0.836
+batch 993/4135 ----- loss:      0.523 ----- accuracy:      0.879 ----- f1_score:      0.875 ----- precision:      0.875 ----- recall:      0.876
+batch 1009/4135 ----- loss:      0.994 ----- accuracy:      0.855 ----- f1_score:      0.855 ----- precision:      0.854 ----- recall:      0.855
+batch 1025/4135 ----- loss:      1.101 ----- accuracy:      0.848 ----- f1_score:      0.845 ----- precision:      0.843 ----- recall:      0.848
+batch 1041/4135 ----- loss:      0.698 ----- accuracy:      0.848 ----- f1_score:      0.847 ----- precision:      0.846 ----- recall:      0.851
+batch 1057/4135 ----- loss:      0.537 ----- accuracy:      0.803 ----- f1_score:      0.792 ----- precision:      0.786 ----- recall:      0.807
+batch 1073/4135 ----- loss:      0.720 ----- accuracy:      0.928 ----- f1_score:      0.928 ----- precision:      0.930 ----- recall:      0.930
+batch 1089/4135 ----- loss:      1.512 ----- accuracy:      0.914 ----- f1_score:      0.912 ----- precision:      0.919 ----- recall:      0.909
+batch 1105/4135 ----- loss:      0.723 ----- accuracy:      0.914 ----- f1_score:      0.911 ----- precision:      0.927 ----- recall:      0.906
+batch 1121/4135 ----- loss:      0.668 ----- accuracy:      0.891 ----- f1_score:      0.888 ----- precision:      0.899 ----- recall:      0.885
+batch 1137/4135 ----- loss:      0.456 ----- accuracy:      0.910 ----- f1_score:      0.910 ----- precision:      0.915 ----- recall:      0.910
+batch 1153/4135 ----- loss:      1.105 ----- accuracy:      0.934 ----- f1_score:      0.922 ----- precision:      0.926 ----- recall:      0.917
+batch 1169/4135 ----- loss:      0.745 ----- accuracy:      0.904 ----- f1_score:      0.903 ----- precision:      0.910 ----- recall:      0.900
+batch 1185/4135 ----- loss:      0.914 ----- accuracy:      0.908 ----- f1_score:      0.905 ----- precision:      0.915 ----- recall:      0.901
+batch 1201/4135 ----- loss:      0.463 ----- accuracy:      0.918 ----- f1_score:      0.913 ----- precision:      0.915 ----- recall:      0.911
+batch 1217/4135 ----- loss:      0.751 ----- accuracy:      0.957 ----- f1_score:      0.954 ----- precision:      0.963 ----- recall:      0.948
+batch 1233/4135 ----- loss:      0.531 ----- accuracy:      0.947 ----- f1_score:      0.942 ----- precision:      0.958 ----- recall:      0.931
+batch 1249/4135 ----- loss:      1.365 ----- accuracy:      0.885 ----- f1_score:      0.884 ----- precision:      0.893 ----- recall:      0.884
+batch 1265/4135 ----- loss:      0.406 ----- accuracy:      0.963 ----- f1_score:      0.959 ----- precision:      0.969 ----- recall:      0.951
+batch 1281/4135 ----- loss:      0.425 ----- accuracy:      0.949 ----- f1_score:      0.945 ----- precision:      0.961 ----- recall:      0.936
+batch 1297/4135 ----- loss:      0.540 ----- accuracy:      0.918 ----- f1_score:      0.917 ----- precision:      0.917 ----- recall:      0.926
+batch 1313/4135 ----- loss:      0.403 ----- accuracy:      0.947 ----- f1_score:      0.945 ----- precision:      0.955 ----- recall:      0.939
+batch 1329/4135 ----- loss:      0.529 ----- accuracy:      0.959 ----- f1_score:      0.957 ----- precision:      0.968 ----- recall:      0.949
+batch 1345/4135 ----- loss:      1.268 ----- accuracy:      0.916 ----- f1_score:      0.915 ----- precision:      0.923 ----- recall:      0.911
+batch 1361/4135 ----- loss:      1.194 ----- accuracy:      0.906 ----- f1_score:      0.899 ----- precision:      0.904 ----- recall:      0.894
+batch 1377/4135 ----- loss:      1.291 ----- accuracy:      0.896 ----- f1_score:      0.896 ----- precision:      0.897 ----- recall:      0.896
+batch 1393/4135 ----- loss:      0.757 ----- accuracy:      0.928 ----- f1_score:      0.925 ----- precision:      0.928 ----- recall:      0.922
+batch 1409/4135 ----- loss:      0.617 ----- accuracy:      0.883 ----- f1_score:      0.883 ----- precision:      0.884 ----- recall:      0.884
+batch 1425/4135 ----- loss:      0.955 ----- accuracy:      0.924 ----- f1_score:      0.918 ----- precision:      0.931 ----- recall:      0.909
+batch 1441/4135 ----- loss:      1.843 ----- accuracy:      0.893 ----- f1_score:      0.887 ----- precision:      0.888 ----- recall:      0.887
+batch 1457/4135 ----- loss:      0.555 ----- accuracy:      0.885 ----- f1_score:      0.883 ----- precision:      0.887 ----- recall:      0.882
+batch 1473/4135 ----- loss:      1.700 ----- accuracy:      0.838 ----- f1_score:      0.821 ----- precision:      0.819 ----- recall:      0.823
+batch 1489/4135 ----- loss:      1.768 ----- accuracy:      0.885 ----- f1_score:      0.878 ----- precision:      0.882 ----- recall:      0.874
+batch 1505/4135 ----- loss:      0.440 ----- accuracy:      0.926 ----- f1_score:      0.921 ----- precision:      0.931 ----- recall:      0.914
+batch 1521/4135 ----- loss:      0.557 ----- accuracy:      0.930 ----- f1_score:      0.927 ----- precision:      0.930 ----- recall:      0.924
+batch 1537/4135 ----- loss:      0.646 ----- accuracy:      0.914 ----- f1_score:      0.910 ----- precision:      0.918 ----- recall:      0.905
+batch 1553/4135 ----- loss:      0.223 ----- accuracy:      0.979 ----- f1_score:      0.966 ----- precision:      0.987 ----- recall:      0.949
+batch 1569/4135 ----- loss:      0.816 ----- accuracy:      0.947 ----- f1_score:      0.944 ----- precision:      0.955 ----- recall:      0.937
+batch 1585/4135 ----- loss:      1.063 ----- accuracy:      0.908 ----- f1_score:      0.906 ----- precision:      0.917 ----- recall:      0.902
+batch 1601/4135 ----- loss:      0.651 ----- accuracy:      0.930 ----- f1_score:      0.925 ----- precision:      0.931 ----- recall:      0.921
+batch 1617/4135 ----- loss:      0.186 ----- accuracy:      0.883 ----- f1_score:      0.879 ----- precision:      0.875 ----- recall:      0.890
+batch 1633/4135 ----- loss:      0.474 ----- accuracy:      0.869 ----- f1_score:      0.868 ----- precision:      0.879 ----- recall:      0.868
+batch 1649/4135 ----- loss:      0.460 ----- accuracy:      0.895 ----- f1_score:      0.892 ----- precision:      0.894 ----- recall:      0.891
+batch 1665/4135 ----- loss:      0.617 ----- accuracy:      0.924 ----- f1_score:      0.920 ----- precision:      0.932 ----- recall:      0.913
+batch 1681/4135 ----- loss:      1.472 ----- accuracy:      0.939 ----- f1_score:      0.924 ----- precision:      0.937 ----- recall:      0.913
+batch 1697/4135 ----- loss:      0.399 ----- accuracy:      0.916 ----- f1_score:      0.915 ----- precision:      0.923 ----- recall:      0.912
+batch 1713/4135 ----- loss:      1.067 ----- accuracy:      0.887 ----- f1_score:      0.887 ----- precision:      0.888 ----- recall:      0.887
+batch 1729/4135 ----- loss:      0.970 ----- accuracy:      0.920 ----- f1_score:      0.919 ----- precision:      0.924 ----- recall:      0.917
+batch 1745/4135 ----- loss:      0.417 ----- accuracy:      0.889 ----- f1_score:      0.883 ----- precision:      0.886 ----- recall:      0.881
+batch 1761/4135 ----- loss:      0.549 ----- accuracy:      0.916 ----- f1_score:      0.916 ----- precision:      0.919 ----- recall:      0.917
+batch 1777/4135 ----- loss:      1.024 ----- accuracy:      0.928 ----- f1_score:      0.923 ----- precision:      0.929 ----- recall:      0.919
+batch 1793/4135 ----- loss:      0.605 ----- accuracy:      0.928 ----- f1_score:      0.920 ----- precision:      0.934 ----- recall:      0.910
+batch 1809/4135 ----- loss:      0.502 ----- accuracy:      0.902 ----- f1_score:      0.897 ----- precision:      0.905 ----- recall:      0.892
+batch 1825/4135 ----- loss:      0.534 ----- accuracy:      0.846 ----- f1_score:      0.844 ----- precision:      0.844 ----- recall:      0.844
+batch 1841/4135 ----- loss:      0.634 ----- accuracy:      0.908 ----- f1_score:      0.907 ----- precision:      0.916 ----- recall:      0.904
+batch 1857/4135 ----- loss:      0.263 ----- accuracy:      0.938 ----- f1_score:      0.935 ----- precision:      0.936 ----- recall:      0.935
+batch 1873/4135 ----- loss:      0.765 ----- accuracy:      0.941 ----- f1_score:      0.936 ----- precision:      0.945 ----- recall:      0.930
+batch 1889/4135 ----- loss:      0.825 ----- accuracy:      0.922 ----- f1_score:      0.919 ----- precision:      0.922 ----- recall:      0.916
+batch 1905/4135 ----- loss:      0.742 ----- accuracy:      0.947 ----- f1_score:      0.942 ----- precision:      0.958 ----- recall:      0.931
+batch 1921/4135 ----- loss:      0.781 ----- accuracy:      0.916 ----- f1_score:      0.912 ----- precision:      0.924 ----- recall:      0.906
+batch 1937/4135 ----- loss:      0.165 ----- accuracy:      0.932 ----- f1_score:      0.929 ----- precision:      0.933 ----- recall:      0.926
+batch 1953/4135 ----- loss:      1.559 ----- accuracy:      0.873 ----- f1_score:      0.873 ----- precision:      0.880 ----- recall:      0.878
+batch 1969/4135 ----- loss:      0.369 ----- accuracy:      0.938 ----- f1_score:      0.936 ----- precision:      0.943 ----- recall:      0.932
+batch 1985/4135 ----- loss:      0.742 ----- accuracy:      0.932 ----- f1_score:      0.929 ----- precision:      0.934 ----- recall:      0.926
+batch 2001/4135 ----- loss:      0.328 ----- accuracy:      0.939 ----- f1_score:      0.934 ----- precision:      0.950 ----- recall:      0.923
+batch 2017/4135 ----- loss:      0.863 ----- accuracy:      0.898 ----- f1_score:      0.898 ----- precision:      0.904 ----- recall:      0.897
+batch 2033/4135 ----- loss:      0.406 ----- accuracy:      0.955 ----- f1_score:      0.948 ----- precision:      0.960 ----- recall:      0.939
+batch 2049/4135 ----- loss:      0.522 ----- accuracy:      0.896 ----- f1_score:      0.892 ----- precision:      0.899 ----- recall:      0.888
+batch 2065/4135 ----- loss:      0.494 ----- accuracy:      0.914 ----- f1_score:      0.913 ----- precision:      0.919 ----- recall:      0.911
+batch 2081/4135 ----- loss:      0.377 ----- accuracy:      0.906 ----- f1_score:      0.904 ----- precision:      0.907 ----- recall:      0.902
+batch 2097/4135 ----- loss:      0.325 ----- accuracy:      0.939 ----- f1_score:      0.937 ----- precision:      0.942 ----- recall:      0.933
+batch 2113/4135 ----- loss:      0.279 ----- accuracy:      0.939 ----- f1_score:      0.936 ----- precision:      0.951 ----- recall:      0.929
+batch 2129/4135 ----- loss:      0.738 ----- accuracy:      0.934 ----- f1_score:      0.933 ----- precision:      0.941 ----- recall:      0.930
+batch 2145/4135 ----- loss:      0.265 ----- accuracy:      0.930 ----- f1_score:      0.916 ----- precision:      0.930 ----- recall:      0.905
+batch 2161/4135 ----- loss:      0.431 ----- accuracy:      0.912 ----- f1_score:      0.905 ----- precision:      0.914 ----- recall:      0.898
+batch 2177/4135 ----- loss:      0.558 ----- accuracy:      0.920 ----- f1_score:      0.919 ----- precision:      0.917 ----- recall:      0.921
+batch 2193/4135 ----- loss:      0.353 ----- accuracy:      0.885 ----- f1_score:      0.873 ----- precision:      0.896 ----- recall:      0.861
+batch 2209/4135 ----- loss:      0.794 ----- accuracy:      0.936 ----- f1_score:      0.933 ----- precision:      0.941 ----- recall:      0.927
+batch 2225/4135 ----- loss:      0.338 ----- accuracy:      0.924 ----- f1_score:      0.921 ----- precision:      0.931 ----- recall:      0.915
+batch 2241/4135 ----- loss:      0.422 ----- accuracy:      0.938 ----- f1_score:      0.929 ----- precision:      0.939 ----- recall:      0.921
+batch 2257/4135 ----- loss:      0.426 ----- accuracy:      0.930 ----- f1_score:      0.927 ----- precision:      0.940 ----- recall:      0.919
+batch 2273/4135 ----- loss:      1.127 ----- accuracy:      0.904 ----- f1_score:      0.904 ----- precision:      0.907 ----- recall:      0.905
+batch 2289/4135 ----- loss:      0.765 ----- accuracy:      0.932 ----- f1_score:      0.931 ----- precision:      0.939 ----- recall:      0.927
+batch 2305/4135 ----- loss:      0.600 ----- accuracy:      0.914 ----- f1_score:      0.913 ----- precision:      0.922 ----- recall:      0.911
+batch 2321/4135 ----- loss:      2.950 ----- accuracy:      0.877 ----- f1_score:      0.875 ----- precision:      0.885 ----- recall:      0.873
+batch 2337/4135 ----- loss:      0.392 ----- accuracy:      0.945 ----- f1_score:      0.935 ----- precision:      0.956 ----- recall:      0.921
+batch 2353/4135 ----- loss:      0.557 ----- accuracy:      0.912 ----- f1_score:      0.911 ----- precision:      0.917 ----- recall:      0.908
+batch 2369/4135 ----- loss:      0.130 ----- accuracy:      0.939 ----- f1_score:      0.936 ----- precision:      0.945 ----- recall:      0.930
+batch 2385/4135 ----- loss:      0.388 ----- accuracy:      0.904 ----- f1_score:      0.895 ----- precision:      0.902 ----- recall:      0.889
+batch 2401/4135 ----- loss:      0.958 ----- accuracy:      0.926 ----- f1_score:      0.923 ----- precision:      0.934 ----- recall:      0.918
+batch 2417/4135 ----- loss:      0.887 ----- accuracy:      0.918 ----- f1_score:      0.917 ----- precision:      0.928 ----- recall:      0.916
+batch 2433/4135 ----- loss:      0.392 ----- accuracy:      0.965 ----- f1_score:      0.962 ----- precision:      0.972 ----- recall:      0.954
+batch 2449/4135 ----- loss:      0.648 ----- accuracy:      0.930 ----- f1_score:      0.928 ----- precision:      0.936 ----- recall:      0.923
+batch 2465/4135 ----- loss:      0.937 ----- accuracy:      0.941 ----- f1_score:      0.938 ----- precision:      0.952 ----- recall:      0.930
+batch 2481/4135 ----- loss:      0.603 ----- accuracy:      0.900 ----- f1_score:      0.898 ----- precision:      0.910 ----- recall:      0.895
+batch 2497/4135 ----- loss:      0.644 ----- accuracy:      0.926 ----- f1_score:      0.924 ----- precision:      0.931 ----- recall:      0.921
+batch 2513/4135 ----- loss:      1.243 ----- accuracy:      0.930 ----- f1_score:      0.928 ----- precision:      0.938 ----- recall:      0.925
+batch 2529/4135 ----- loss:      0.400 ----- accuracy:      0.926 ----- f1_score:      0.913 ----- precision:      0.911 ----- recall:      0.916
+batch 2545/4135 ----- loss:      0.259 ----- accuracy:      0.941 ----- f1_score:      0.939 ----- precision:      0.947 ----- recall:      0.934
+batch 2561/4135 ----- loss:      0.563 ----- accuracy:      0.951 ----- f1_score:      0.946 ----- precision:      0.958 ----- recall:      0.938
+batch 2577/4135 ----- loss:      0.471 ----- accuracy:      0.947 ----- f1_score:      0.941 ----- precision:      0.950 ----- recall:      0.933
+batch 2593/4135 ----- loss:      2.154 ----- accuracy:      0.893 ----- f1_score:      0.892 ----- precision:      0.897 ----- recall:      0.891
+batch 2609/4135 ----- loss:      0.398 ----- accuracy:      0.953 ----- f1_score:      0.950 ----- precision:      0.956 ----- recall:      0.946
+batch 2625/4135 ----- loss:      0.371 ----- accuracy:      0.930 ----- f1_score:      0.929 ----- precision:      0.930 ----- recall:      0.929
+batch 2641/4135 ----- loss:      0.278 ----- accuracy:      0.922 ----- f1_score:      0.920 ----- precision:      0.922 ----- recall:      0.918
+batch 2657/4135 ----- loss:      0.283 ----- accuracy:      0.945 ----- f1_score:      0.944 ----- precision:      0.949 ----- recall:      0.940
+batch 2673/4135 ----- loss:      0.390 ----- accuracy:      0.924 ----- f1_score:      0.920 ----- precision:      0.924 ----- recall:      0.917
+batch 2689/4135 ----- loss:      0.093 ----- accuracy:      0.938 ----- f1_score:      0.932 ----- precision:      0.943 ----- recall:      0.924
+batch 2705/4135 ----- loss:      0.333 ----- accuracy:      0.939 ----- f1_score:      0.933 ----- precision:      0.944 ----- recall:      0.925
+batch 2721/4135 ----- loss:      0.531 ----- accuracy:      0.922 ----- f1_score:      0.921 ----- precision:      0.923 ----- recall:      0.920
+batch 2737/4135 ----- loss:      0.874 ----- accuracy:      0.924 ----- f1_score:      0.923 ----- precision:      0.930 ----- recall:      0.920
+batch 2753/4135 ----- loss:      0.480 ----- accuracy:      0.945 ----- f1_score:      0.942 ----- precision:      0.955 ----- recall:      0.935
+batch 2769/4135 ----- loss:      0.702 ----- accuracy:      0.939 ----- f1_score:      0.933 ----- precision:      0.943 ----- recall:      0.926
+batch 2785/4135 ----- loss:      0.638 ----- accuracy:      0.934 ----- f1_score:      0.929 ----- precision:      0.935 ----- recall:      0.925
+batch 2801/4135 ----- loss:      0.243 ----- accuracy:      0.924 ----- f1_score:      0.916 ----- precision:      0.919 ----- recall:      0.914
+batch 2817/4135 ----- loss:      0.084 ----- accuracy:      0.928 ----- f1_score:      0.925 ----- precision:      0.933 ----- recall:      0.920
+batch 2833/4135 ----- loss:      0.557 ----- accuracy:      0.936 ----- f1_score:      0.934 ----- precision:      0.937 ----- recall:      0.933
+batch 2849/4135 ----- loss:      1.086 ----- accuracy:      0.945 ----- f1_score:      0.942 ----- precision:      0.948 ----- recall:      0.937
+batch 2865/4135 ----- loss:      0.531 ----- accuracy:      0.914 ----- f1_score:      0.914 ----- precision:      0.917 ----- recall:      0.914
+batch 2881/4135 ----- loss:      0.537 ----- accuracy:      0.945 ----- f1_score:      0.945 ----- precision:      0.945 ----- recall:      0.944
+batch 2897/4135 ----- loss:      0.342 ----- accuracy:      0.957 ----- f1_score:      0.949 ----- precision:      0.958 ----- recall:      0.941
+batch 2913/4135 ----- loss:      0.302 ----- accuracy:      0.936 ----- f1_score:      0.931 ----- precision:      0.935 ----- recall:      0.929
+batch 2929/4135 ----- loss:      0.654 ----- accuracy:      0.924 ----- f1_score:      0.922 ----- precision:      0.931 ----- recall:      0.918
+batch 2945/4135 ----- loss:      0.770 ----- accuracy:      0.934 ----- f1_score:      0.930 ----- precision:      0.937 ----- recall:      0.924
+batch 2961/4135 ----- loss:      0.780 ----- accuracy:      0.902 ----- f1_score:      0.899 ----- precision:      0.902 ----- recall:      0.897
+batch 2977/4135 ----- loss:      0.637 ----- accuracy:      0.906 ----- f1_score:      0.905 ----- precision:      0.906 ----- recall:      0.904
+batch 2993/4135 ----- loss:      0.430 ----- accuracy:      0.939 ----- f1_score:      0.935 ----- precision:      0.937 ----- recall:      0.934
+batch 3009/4135 ----- loss:      0.372 ----- accuracy:      0.945 ----- f1_score:      0.942 ----- precision:      0.947 ----- recall:      0.939
+batch 3025/4135 ----- loss:      0.520 ----- accuracy:      0.904 ----- f1_score:      0.899 ----- precision:      0.913 ----- recall:      0.892
+batch 3041/4135 ----- loss:      0.216 ----- accuracy:      0.936 ----- f1_score:      0.933 ----- precision:      0.935 ----- recall:      0.931
+batch 3057/4135 ----- loss:      0.872 ----- accuracy:      0.912 ----- f1_score:      0.912 ----- precision:      0.914 ----- recall:      0.911
+batch 3073/4135 ----- loss:      0.808 ----- accuracy:      0.932 ----- f1_score:      0.931 ----- precision:      0.934 ----- recall:      0.929
+batch 3089/4135 ----- loss:      0.087 ----- accuracy:      0.955 ----- f1_score:      0.948 ----- precision:      0.952 ----- recall:      0.945
+batch 3105/4135 ----- loss:      0.685 ----- accuracy:      0.924 ----- f1_score:      0.921 ----- precision:      0.932 ----- recall:      0.916
+batch 3121/4135 ----- loss:      0.269 ----- accuracy:      0.941 ----- f1_score:      0.934 ----- precision:      0.952 ----- recall:      0.921
+batch 3137/4135 ----- loss:      0.543 ----- accuracy:      0.938 ----- f1_score:      0.935 ----- precision:      0.942 ----- recall:      0.930
+batch 3153/4135 ----- loss:      0.808 ----- accuracy:      0.920 ----- f1_score:      0.915 ----- precision:      0.924 ----- recall:      0.909
+batch 3169/4135 ----- loss:      0.408 ----- accuracy:      0.939 ----- f1_score:      0.936 ----- precision:      0.941 ----- recall:      0.931
+batch 3185/4135 ----- loss:      0.408 ----- accuracy:      0.932 ----- f1_score:      0.925 ----- precision:      0.946 ----- recall:      0.913
+batch 3201/4135 ----- loss:      0.381 ----- accuracy:      0.939 ----- f1_score:      0.939 ----- precision:      0.942 ----- recall:      0.937
+batch 3217/4135 ----- loss:      0.430 ----- accuracy:      0.945 ----- f1_score:      0.939 ----- precision:      0.955 ----- recall:      0.927
+batch 3233/4135 ----- loss:      0.364 ----- accuracy:      0.969 ----- f1_score:      0.966 ----- precision:      0.973 ----- recall:      0.960
+batch 3249/4135 ----- loss:      0.923 ----- accuracy:      0.949 ----- f1_score:      0.948 ----- precision:      0.956 ----- recall:      0.944
+batch 3265/4135 ----- loss:      0.564 ----- accuracy:      0.938 ----- f1_score:      0.928 ----- precision:      0.944 ----- recall:      0.917
+batch 3281/4135 ----- loss:      0.095 ----- accuracy:      0.932 ----- f1_score:      0.929 ----- precision:      0.937 ----- recall:      0.923
+batch 3297/4135 ----- loss:      0.574 ----- accuracy:      0.920 ----- f1_score:      0.918 ----- precision:      0.920 ----- recall:      0.916
+batch 3313/4135 ----- loss:      0.456 ----- accuracy:      0.918 ----- f1_score:      0.918 ----- precision:      0.923 ----- recall:      0.917
+batch 3329/4135 ----- loss:      0.227 ----- accuracy:      0.955 ----- f1_score:      0.949 ----- precision:      0.959 ----- recall:      0.940
+batch 3345/4135 ----- loss:      0.576 ----- accuracy:      0.928 ----- f1_score:      0.926 ----- precision:      0.930 ----- recall:      0.923
+batch 3361/4135 ----- loss:      0.090 ----- accuracy:      0.955 ----- f1_score:      0.946 ----- precision:      0.960 ----- recall:      0.935
+batch 3377/4135 ----- loss:      0.651 ----- accuracy:      0.916 ----- f1_score:      0.915 ----- precision:      0.919 ----- recall:      0.914
+batch 3393/4135 ----- loss:      0.620 ----- accuracy:      0.941 ----- f1_score:      0.937 ----- precision:      0.943 ----- recall:      0.931
+batch 3409/4135 ----- loss:      1.227 ----- accuracy:      0.887 ----- f1_score:      0.886 ----- precision:      0.888 ----- recall:      0.886
+batch 3425/4135 ----- loss:      1.559 ----- accuracy:      0.951 ----- f1_score:      0.949 ----- precision:      0.951 ----- recall:      0.947
+batch 3441/4135 ----- loss:      0.740 ----- accuracy:      0.930 ----- f1_score:      0.928 ----- precision:      0.938 ----- recall:      0.923
+batch 3457/4135 ----- loss:      0.469 ----- accuracy:      0.930 ----- f1_score:      0.927 ----- precision:      0.931 ----- recall:      0.923
+batch 3473/4135 ----- loss:      0.179 ----- accuracy:      0.932 ----- f1_score:      0.926 ----- precision:      0.930 ----- recall:      0.923
+batch 3489/4135 ----- loss:      0.082 ----- accuracy:      0.928 ----- f1_score:      0.926 ----- precision:      0.936 ----- recall:      0.920
+batch 3505/4135 ----- loss:      0.312 ----- accuracy:      0.906 ----- f1_score:      0.902 ----- precision:      0.901 ----- recall:      0.904
+batch 3521/4135 ----- loss:      1.235 ----- accuracy:      0.922 ----- f1_score:      0.908 ----- precision:      0.908 ----- recall:      0.908
+batch 3537/4135 ----- loss:      0.495 ----- accuracy:      0.930 ----- f1_score:      0.929 ----- precision:      0.927 ----- recall:      0.932
+batch 3553/4135 ----- loss:      0.841 ----- accuracy:      0.947 ----- f1_score:      0.946 ----- precision:      0.945 ----- recall:      0.947
+batch 3569/4135 ----- loss:      0.834 ----- accuracy:      0.924 ----- f1_score:      0.924 ----- precision:      0.925 ----- recall:      0.930
+batch 3585/4135 ----- loss:      0.348 ----- accuracy:      0.949 ----- f1_score:      0.948 ----- precision:      0.952 ----- recall:      0.945
+batch 3601/4135 ----- loss:      0.752 ----- accuracy:      0.910 ----- f1_score:      0.909 ----- precision:      0.910 ----- recall:      0.908
+batch 3617/4135 ----- loss:      0.252 ----- accuracy:      0.922 ----- f1_score:      0.920 ----- precision:      0.922 ----- recall:      0.919
+batch 3633/4135 ----- loss:      0.450 ----- accuracy:      0.963 ----- f1_score:      0.955 ----- precision:      0.970 ----- recall:      0.942
+batch 3649/4135 ----- loss:      0.318 ----- accuracy:      0.914 ----- f1_score:      0.910 ----- precision:      0.917 ----- recall:      0.905
+batch 3665/4135 ----- loss:      0.965 ----- accuracy:      0.895 ----- f1_score:      0.893 ----- precision:      0.893 ----- recall:      0.893
+batch 3681/4135 ----- loss:      0.192 ----- accuracy:      0.949 ----- f1_score:      0.947 ----- precision:      0.945 ----- recall:      0.948
+batch 3697/4135 ----- loss:      0.411 ----- accuracy:      0.947 ----- f1_score:      0.943 ----- precision:      0.946 ----- recall:      0.941
+batch 3713/4135 ----- loss:      0.477 ----- accuracy:      0.959 ----- f1_score:      0.957 ----- precision:      0.966 ----- recall:      0.951
+batch 3729/4135 ----- loss:      0.344 ----- accuracy:      0.930 ----- f1_score:      0.928 ----- precision:      0.936 ----- recall:      0.923
+batch 3745/4135 ----- loss:      1.104 ----- accuracy:      0.957 ----- f1_score:      0.952 ----- precision:      0.955 ----- recall:      0.950
+batch 3761/4135 ----- loss:      0.503 ----- accuracy:      0.961 ----- f1_score:      0.954 ----- precision:      0.973 ----- recall:      0.940
+batch 3777/4135 ----- loss:      0.363 ----- accuracy:      0.955 ----- f1_score:      0.953 ----- precision:      0.951 ----- recall:      0.954
+batch 3793/4135 ----- loss:      0.517 ----- accuracy:      0.945 ----- f1_score:      0.940 ----- precision:      0.952 ----- recall:      0.931
+batch 3809/4135 ----- loss:      0.435 ----- accuracy:      0.965 ----- f1_score:      0.962 ----- precision:      0.969 ----- recall:      0.956
+batch 3825/4135 ----- loss:      0.312 ----- accuracy:      0.934 ----- f1_score:      0.932 ----- precision:      0.943 ----- recall:      0.926
+batch 3841/4135 ----- loss:      0.683 ----- accuracy:      0.965 ----- f1_score:      0.962 ----- precision:      0.967 ----- recall:      0.958
+batch 3857/4135 ----- loss:      0.584 ----- accuracy:      0.916 ----- f1_score:      0.913 ----- precision:      0.928 ----- recall:      0.906
+batch 3873/4135 ----- loss:      0.526 ----- accuracy:      0.938 ----- f1_score:      0.934 ----- precision:      0.933 ----- recall:      0.936
+batch 3889/4135 ----- loss:      0.965 ----- accuracy:      0.947 ----- f1_score:      0.944 ----- precision:      0.955 ----- recall:      0.936
+batch 3905/4135 ----- loss:      0.395 ----- accuracy:      0.963 ----- f1_score:      0.961 ----- precision:      0.968 ----- recall:      0.956
+batch 3921/4135 ----- loss:      0.355 ----- accuracy:      0.973 ----- f1_score:      0.970 ----- precision:      0.975 ----- recall:      0.965
+batch 3937/4135 ----- loss:      0.752 ----- accuracy:      0.932 ----- f1_score:      0.930 ----- precision:      0.933 ----- recall:      0.927
+batch 3953/4135 ----- loss:      0.490 ----- accuracy:      0.908 ----- f1_score:      0.907 ----- precision:      0.915 ----- recall:      0.905
+batch 3969/4135 ----- loss:      0.894 ----- accuracy:      0.895 ----- f1_score:      0.888 ----- precision:      0.898 ----- recall:      0.882
+batch 3985/4135 ----- loss:      0.923 ----- accuracy:      0.926 ----- f1_score:      0.923 ----- precision:      0.926 ----- recall:      0.920
+batch 4001/4135 ----- loss:      0.482 ----- accuracy:      0.951 ----- f1_score:      0.948 ----- precision:      0.958 ----- recall:      0.940
+batch 4017/4135 ----- loss:      0.546 ----- accuracy:      0.891 ----- f1_score:      0.889 ----- precision:      0.892 ----- recall:      0.887
+batch 4033/4135 ----- loss:      0.474 ----- accuracy:      0.908 ----- f1_score:      0.900 ----- precision:      0.910 ----- recall:      0.893
+batch 4049/4135 ----- loss:      0.107 ----- accuracy:      0.941 ----- f1_score:      0.939 ----- precision:      0.948 ----- recall:      0.933
+batch 4065/4135 ----- loss:      0.592 ----- accuracy:      0.951 ----- f1_score:      0.948 ----- precision:      0.961 ----- recall:      0.941
+batch 4081/4135 ----- loss:      0.393 ----- accuracy:      0.967 ----- f1_score:      0.960 ----- precision:      0.975 ----- recall:      0.949
+batch 4097/4135 ----- loss:      1.154 ----- accuracy:      0.926 ----- f1_score:      0.920 ----- precision:      0.934 ----- recall:      0.912
+batch 4113/4135 ----- loss:      0.266 ----- accuracy:      0.924 ----- f1_score:      0.922 ----- precision:      0.931 ----- recall:      0.918
+batch 4129/4135 ----- loss:      0.204 ----- accuracy:      0.928 ----- f1_score:      0.927 ----- precision:      0.928 ----- recall:      0.926
+batch 4135/4135 ----- loss:      0.278 ----- accuracy:      0.927 ----- f1_score:      0.927 ----- precision:      0.928 ----- recall:      0.928
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+EPOCH 1 training loss:      0.497 - validation loss:      0.472
+EPOCH 1 training accuracy:      0.937 - validation accuracy:      0.939
+EPOCH 1 training f1_score:      0.926 - validation f1_score:      0.930
+EPOCH 1 training precision:      0.927 - validation precision:      0.930
+EPOCH 1 training recall:      0.937 - validation recall:      0.939
+----------------------------------------------------------------------------------------------------
+
+train set: 
+        false positive: 2642 false negative: 5701 true positive: 48994 true negative: 74999. 
+        Just timeouts: 205 total element to discard: 54695.0 undetected timeouts: 5162 true timeouts: 34846
+        
+        oracles:
+        good oracle: 304,202.07 bad oracle: 90,804,335.95 random oracle: 19,249,072.63 order: 6,738,106.21
+        virtual best: 88,758.17 single best: 6,213,070.61 
+        good oracle/vb: 3.43 good oracle/sb: 0.05 
+        bad oracle/vb: 1023.05 bad oracle/sb: 14.62 
+        random oracle/vb: 216.87 random oracle/sb: 3.1 
+        order/vb: 75.92 order/sb: 1.08 
+        
+validation set: 
+        false positive: 280 false negative: 616 true positive: 5299 true negative: 8557. 
+        Just timeouts: 20 total element to discard: 5915.0 undetected timeouts: 529 true timeouts: 3792
+        
+        oracles:
+        good oracle: 24,151.24 bad oracle: 9,530,016.54 random oracle: 1,696,247.12 order: 764,550.03
+        virtual best: 9,268.37 single best: 539,525.83 
+        good oracle/vb: 2.61 good oracle/sb: 0.04 
+        bad oracle/vb: 1028.23 bad oracle/sb: 17.66 
+        random oracle/vb: 183.01 random oracle/sb: 3.14 
+        order/vb: 82.49 order/sb: 1.42 
+        
+test set: 
+        false positive: 326 false negative: 711 true positive: 6060 true negative: 9239. 
+        Just timeouts: 23 total element to discard: 6771.0 undetected timeouts: 643 true timeouts: 4375
+        
+        oracles:
+        good oracle: 65,014.26 bad oracle: 11,072,817.01 random oracle: 2,338,096.17 order: 984,623.43
+        virtual best: 10,926.49 single best: 601,854.86 
+        good oracle/vb: 5.95 good oracle/sb: 0.11 
+        bad oracle/vb: 124.75 bad oracle/sb: 18.4 
+        random oracle/vb: 213.98 random oracle/sb: 3.88 
+        order/vb: 90.11 order/sb: 1.64 
+        
+Elapsed time: 7003 seconds

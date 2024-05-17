@@ -1,0 +1,79 @@
+SocialGolfers
+Some weights of LongformerModel were not initialized from the model checkpoint at tororoin/longformer-8bitadam-2048-main and are newly initialized: ['longformer.pooler.dense.bias', 'longformer.pooler.dense.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+Input ids are automatically padded from 17 to 512 to be a multiple of `config.attention_window`: 512
+operating on device: cuda:0
+
+batch 1/418 ----- loss:      1.745 ----- accuracy:      0.625 ----- f1_score:      0.500 ----- precision:      0.551 ----- recall:      0.644
+batch 17/418 ----- loss:      1.460 ----- accuracy:      0.639 ----- f1_score:      0.452 ----- precision:      0.463 ----- recall:      0.449
+batch 33/418 ----- loss:      1.421 ----- accuracy:      0.834 ----- f1_score:      0.628 ----- precision:      0.709 ----- recall:      0.606
+batch 49/418 ----- loss:      1.130 ----- accuracy:      0.848 ----- f1_score:      0.677 ----- precision:      0.763 ----- recall:      0.648
+batch 65/418 ----- loss:      1.271 ----- accuracy:      0.854 ----- f1_score:      0.684 ----- precision:      0.809 ----- recall:      0.649
+batch 81/418 ----- loss:      0.874 ----- accuracy:      0.873 ----- f1_score:      0.700 ----- precision:      0.852 ----- recall:      0.658
+batch 97/418 ----- loss:      0.938 ----- accuracy:      0.824 ----- f1_score:      0.636 ----- precision:      0.781 ----- recall:      0.614
+batch 113/418 ----- loss:      0.894 ----- accuracy:      0.854 ----- f1_score:      0.658 ----- precision:      0.789 ----- recall:      0.627
+batch 129/418 ----- loss:      0.808 ----- accuracy:      0.879 ----- f1_score:      0.684 ----- precision:      0.799 ----- recall:      0.646
+batch 145/418 ----- loss:      0.753 ----- accuracy:      0.885 ----- f1_score:      0.697 ----- precision:      0.826 ----- recall:      0.655
+batch 161/418 ----- loss:      0.726 ----- accuracy:      0.846 ----- f1_score:      0.645 ----- precision:      0.801 ----- recall:      0.617
+batch 177/418 ----- loss:      0.686 ----- accuracy:      0.875 ----- f1_score:      0.698 ----- precision:      0.863 ----- recall:      0.655
+batch 193/418 ----- loss:      0.633 ----- accuracy:      0.865 ----- f1_score:      0.686 ----- precision:      0.857 ----- recall:      0.646
+batch 209/418 ----- loss:      0.714 ----- accuracy:      0.854 ----- f1_score:      0.654 ----- precision:      0.816 ----- recall:      0.622
+batch 225/418 ----- loss:      0.747 ----- accuracy:      0.912 ----- f1_score:      0.734 ----- precision:      0.836 ----- recall:      0.688
+batch 241/418 ----- loss:      0.648 ----- accuracy:      0.885 ----- f1_score:      0.692 ----- precision:      0.822 ----- recall:      0.651
+batch 257/418 ----- loss:      0.857 ----- accuracy:      0.846 ----- f1_score:      0.650 ----- precision:      0.816 ----- recall:      0.620
+batch 273/418 ----- loss:      0.627 ----- accuracy:      0.857 ----- f1_score:      0.676 ----- precision:      0.866 ----- recall:      0.640
+batch 289/418 ----- loss:      0.546 ----- accuracy:      0.887 ----- f1_score:      0.709 ----- precision:      0.867 ----- recall:      0.663
+batch 305/418 ----- loss:      0.586 ----- accuracy:      0.855 ----- f1_score:      0.665 ----- precision:      0.835 ----- recall:      0.631
+batch 321/418 ----- loss:      0.614 ----- accuracy:      0.842 ----- f1_score:      0.667 ----- precision:      0.861 ----- recall:      0.635
+batch 337/418 ----- loss:      0.741 ----- accuracy:      0.844 ----- f1_score:      0.669 ----- precision:      0.829 ----- recall:      0.637
+batch 353/418 ----- loss:      0.574 ----- accuracy:      0.902 ----- f1_score:      0.718 ----- precision:      0.821 ----- recall:      0.675
+batch 369/418 ----- loss:      0.598 ----- accuracy:      0.859 ----- f1_score:      0.655 ----- precision:      0.794 ----- recall:      0.623
+batch 385/418 ----- loss:      0.604 ----- accuracy:      0.885 ----- f1_score:      0.670 ----- precision:      0.764 ----- recall:      0.636
+batch 401/418 ----- loss:      0.736 ----- accuracy:      0.848 ----- f1_score:      0.665 ----- precision:      0.848 ----- recall:      0.633
+batch 417/418 ----- loss:      0.610 ----- accuracy:      0.855 ----- f1_score:      0.682 ----- precision:      0.880 ----- recall:      0.645
+batch 418/418 ----- loss:      0.945 ----- accuracy:      0.719 ----- f1_score:      0.506 ----- precision:      0.617 ----- recall:      0.534
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+EPOCH 1 training loss:      0.644 - validation loss:      0.691
+EPOCH 1 training accuracy:      0.863 - validation accuracy:      0.849
+EPOCH 1 training f1_score:      0.684 - validation f1_score:      0.644
+EPOCH 1 training precision:      0.668 - validation precision:      0.627
+EPOCH 1 training recall:      0.830 - validation recall:      0.798
+----------------------------------------------------------------------------------------------------
+
+train set: 
+        false positive: 1654 false negative: 175 true positive: 10901 true negative: 662. 
+        Just timeouts: 0 total element to discard: 11076.0 undetected timeouts: 57 true timeouts: 8362
+        
+        oracles:
+        good oracle: 1,151,210.87 bad oracle: 1,151,210.87 random oracle: 1,151,210.87 order: 1,151,210.87
+        virtual best: 148,231.87 single best: 222,758.00 
+        good oracle/vb: 7.77 good oracle/sb: 5.17 
+        bad oracle/vb: 7.77 bad oracle/sb: 5.17 
+        random oracle/vb: 7.77 random oracle/sb: 5.17 
+        order/vb: 7.77 order/sb: 5.17 
+        
+validation set: 
+        false positive: 215 false negative: 25 true positive: 1270 true negative: 74. 
+        Just timeouts: 0 total element to discard: 1295.0 undetected timeouts: 8 true timeouts: 970
+        
+        oracles:
+        good oracle: 176,915.85 bad oracle: 176,915.85 random oracle: 176,915.85 order: 176,915.85
+        virtual best: 17,262.94 single best: 17,357.29 
+        good oracle/vb: 10.25 good oracle/sb: 10.19 
+        bad oracle/vb: 10.25 bad oracle/sb: 10.19 
+        random oracle/vb: 10.25 random oracle/sb: 10.19 
+        order/vb: 10.25 order/sb: 10.19 
+        
+test set: 
+        false positive: 169 false negative: 28 true positive: 1376 true negative: 75. 
+        Just timeouts: 0 total element to discard: 1404.0 undetected timeouts: 9 true timeouts: 1050
+        
+        oracles:
+        good oracle: 214,261.08 bad oracle: 214,261.08 random oracle: 214,261.08 order: 214,261.08
+        virtual best: 16,567.29 single best: 16,951.09 
+        good oracle/vb: 12.93 good oracle/sb: 12.64 
+        bad oracle/vb: 1.45 bad oracle/sb: 12.64 
+        random oracle/vb: 12.93 random oracle/sb: 12.64 
+        order/vb: 12.93 order/sb: 12.64 
+        
+Elapsed time: 113 seconds
