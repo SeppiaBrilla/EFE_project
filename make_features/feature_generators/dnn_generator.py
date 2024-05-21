@@ -1,7 +1,7 @@
 from .base_generator import Generator
 import torch.nn as nn
 import torch.nn.functional as F
-from torch import load
+from torch import load, device, cuda
 from transformers import AutoModel, AutoTokenizer, logging
 logging.set_verbosity_error()
 
@@ -20,14 +20,17 @@ class Model(nn.Module):
 class Language_features_generator(Generator):
     def __init__(self, names:'list', pre_trained_weights:'str', probabilities_only:'bool'=False) -> None:
         super().__init__()
+        self.device = device("cuda:0" if cuda.is_available() else "cpu")
         self.model = Model(len(names))
         self.model.load_state_dict(load(pre_trained_weights))
+        self.model = self.model.to(self.device)
         self.names = names
         self.tokenizer = AutoTokenizer.from_pretrained("tororoin/longformer-8bitadam-2048-main")
         self.probabilities_only = probabilities_only
 
     def generate(self, instance: 'str') -> 'dict[str,float]':
         tokenized_instance = self.tokenizer(instance, truncation=True, return_tensors="pt")
+        tokenized_instance = {k:tokenized_instance[k].to(self.device) for k in tokenized_instance.keys()}
         model_output = self.model(tokenized_instance)
         if self.probabilities_only:
             return {self.names[i]: model_output["out"][i] for i in range(len(self.names))}

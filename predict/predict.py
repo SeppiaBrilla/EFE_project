@@ -120,8 +120,11 @@ def predict(args):
             output["prediction_time"] = time() - start_time
         if args.output == "text":
             output = "\n".join([f"{key}:    {output[key]}" for key in output.keys()])
-        else:
+        elif args.output == "json":
             output = json.dumps(output)
+        elif args.output == "csv":
+            keys = list(output.keys())
+            output = f"{'.'.join(keys)}\n{','.join([str(output[k]) for k in keys])}"
         print(output)
 
     elif os.path.exists(features):
@@ -140,8 +143,12 @@ def predict(args):
             for prediction in predictions:
                 output += f"\n\t- {prediction['inst']}:  {prediction['chosen_option']}"
             output += f"\nprediction time:  {final_time}"
-        else:
+        elif args.output == "json":
             output = json.dumps(output)
+        elif args.output == "csv":
+            output = "inst,chosen_option,total_time"
+            for prediction in predictions:
+                output += f"{prediction['inst']},{prediction['chosen_option']},{final_time}"
         print(output)
     
 
@@ -153,7 +160,7 @@ parser.add_argument("-o", "--ordering", choices=["single_best", "wins"], help="t
 parser.add_argument("--filter", default=False, help="Whether if the model should use the feature to pre-filter the options or not. Default = False", action='store_true')
 parser.add_argument("-f", "--features", type=str, help="The features to use with the heuristic. It must be either a csv file or a comma separated list of values to use as features", required=True)
 parser.add_argument("--metrics_type", type=str, help="The metric to maximise in the metric ordering", choices=["recall", "accuracy", "precision", "f1"], required=False)
-parser.add_argument("--output", choices=["text", "json"], help="The output format when predicting. Default: text", default="text")
+parser.add_argument("--output", choices=["text", "json", "csv"], help="The output format when predicting. Default: text", default="text")
 parser.add_argument("--max_threads", help="The number of threads to use during the prediction with autofolio", type=int, default=12)
 parser.add_argument("--time", default=False, help="Whether the script shoud print the time required to get the predictions or not. Default = False", action='store_true')
 parser.add_argument("-n", "--name", help="File name to use for the predictor", type=str, required=True)
