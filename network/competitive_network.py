@@ -1,5 +1,6 @@
 import torch.functional as F
-from torch.utils.data import Dataset, DataLoader
+import argparse
+from torch.utils.data import DataLoader
 import torch
 from random import randint
 from json import loads
@@ -7,9 +8,8 @@ import numpy as np
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
 from neuralNetwork import In_between_epochs
 import torch.nn.functional as F
-from helper import dict_lists_to_list_of_dicts, get_dataloader, get_time_matrix, remove_comments
+from helper import dict_lists_to_list_of_dicts, get_dataloader, get_time_matrix
 from models import BaseModel, get_tokenizer
-from sys import argv
 
 class Timeout_analiser(In_between_epochs):
     def __init__(self, train_dataloader, validation_dataloader, test_dataloader, order, 
@@ -141,38 +141,46 @@ class Timeout_analiser(In_between_epochs):
         return False
 
 class Save_weights(In_between_epochs):
-    def __init__(self, weights_name) -> None:
+    def __init__(self, weights_name, multiplier) -> None:
         super().__init__()
+        self.epochs = 0
+        self.mult = multiplier
         self.name = weights_name
 
     def __call__(self, model, loaders, device, output_extraction_function) -> bool:
-        torch.save(model.state_dict(), self.name)
+        self.epochs += 1
+        name = f"{self.name}_{self.mult}_{self.epochs}"
+        torch.save(model.state_dict(), name)
         return False
+
 def is_competitive(vb, option):
     return (option < 10 or vb * 2 <= option) and option < 3600
 
+parser = argparse.ArgumentParser()
+parser.add_argument("--dataset", required=True)
+parser.add_argument("--batch_size", type=int, required=True)
+parser.add_argument("--epochs", type=int, required=True)
+parser.add_argument("--learning_rate", type=float, required=True)
+parser.add_argument("--history", required=True)
+parser.add_argument("--save", required=True)
+parser.add_argument("--fold", type=int, required=True)
+parser.add_argument("--pre_trained", required=False)
+parser.add_argument("--multiplier", type=int, default=1, required=True)
+
 def main():
 
-    if argv[1] == '--help':
-        print(f"{argv[0]} dataset batch_size epochs learning_rate history_file save_weights_file fold pretrained_weights")
-        #print("bert types: \n[1]FacebookAI/roberta-base \n[2]bert-base-uncased \n[3]allenai/longformer-base-4096 \n[4]microsoft/codebert-base")
-        return
-
-    dataset, batch_size, epochs, learning_rate, history_file, save_weights_file, fold = argv[1], int(argv[2]), int(argv[3]), float(argv[4]), argv[5], argv[6], int(argv[7])
-
-    pretrained_weights = None
-    if len(argv) == 9:
-        pretrained_weights = argv[8]
+    arguments = parser.parse_args()
+    dataset = arguments.dataset
+    pretrained_weights = arguments.pre_trained
+    batch_size = arguments.batch_size
+    epochs = arguments.epochs
+    learning_rate = arguments.learning_rate
+    history_file = arguments.history
+    save_weights_file = arguments.save
+    fold = arguments.fold
+    multiplier = arguments.multiplier
 
     bert_type = "tororoin/longformer-8bitadam-2048-main"
-    if bert_type == "1":
-        bert_type = "FacebookAI/roberta-base"
-    elif bert_type == "2":
-        bert_type = "bert-base-uncased"
-    elif bert_type == "3":
-        bert_type = "allenai/longformer-base-4096"
-    elif bert_type == "4":
-        bert_type = "microsoft/codebert-base"
     f = open(dataset)
     data = loads(f.read())
     f.close()
@@ -228,15 +236,16 @@ def main():
                                         DataLoader(test_dataloader.dataset, shuffle=False, batch_size=12), order, idx2comb,
                 round(min_train, 2), round(sb_train, 2), round(min_val, 2), round(sb_val, 2), round(min_test, 2), 
                 round(sb_test, 2))
-    saver = Save_weights(save_weights_file)
+    saver = Save_weights(save_weights_file, multiplier)
     timeouts = [sum([1 if times[i, j] >= 3600 else 0 for i in range(len_train)]) for j in range(16)]
     max_timeouts = max(timeouts)
     timeouts = [10 * (1 - (timeout / max_timeouts)) for timeout in timeouts]
     weights = torch.tensor(timeouts)
     weights = weights.to(device)
+
     def loss(y_pred, y_true):
         timeouts_out = F.sigmoid(y_pred)
-        timeouts = -(2 * y_true["competitivness"] * torch.log(timeouts_out) + (1 - y_true["competitivness"]) * torch.log(1 - timeouts_out))
+        timeouts = -(multiplier * y_true["competitivness"] * torch.log(timeouts_out) + (1 - y_true["competitivness"]) * torch.log(1 - timeouts_out))
         timeouts = timeouts * weights
         timeouts = torch.mean(timeouts)
         return timeouts
@@ -261,10 +270,9 @@ def main():
                      "recall": lambda y_true, y_pred: recall_score(np.ravel(y_true), np.ravel(y_pred), average="macro", zero_division=0)},
                     in_between_epochs={"validate_timeout":timeout_analiser, "save": saver},
                     learning_rate=learning_rate,
-                    scheduler=lambda optimizer: torch.optim.lr_scheduler.LinearLR(optimizer, start_factor=1.0, end_factor=0.01, total_iters=10),
                     epochs=epochs)
 
-    torch.save(model.state_dict(), save_weights_file)
+    torch.save(model.state_dict(), f"{save_weights_file}_final")
     from json import dump
     f = open(history_file, 'w')
     for key in train_data:
