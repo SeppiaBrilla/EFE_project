@@ -76,7 +76,7 @@ class Autofolio_predictor(Predictor):
 
             subprocess.run(
                 ["python", "AutoFolio/scripts/autofolio", 
-                 "--performance_csv", times_file, "--feature_csv", features_file, "--save", pre_trained_model])
+                 "--performance_csv", times_file, "--feature_csv", features_file, "-t", "--save", pre_trained_model])
         self.model = pre_trained_model
 
     @staticmethod

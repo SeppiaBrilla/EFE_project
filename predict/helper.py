@@ -1,6 +1,6 @@
 import argparse
 from predictor.base_predictor import Predictor
-from predictor.clustering_predictor import Clustering_predictor
+from predictor.clustering_predictor import Kmeans_predictor
 from predictor.order_predictor import Static_ordering_predictor
 from predictor.autofolio_predictor import Autofolio_predictor
 from predictor.order_metrics import Metrics_predictor
@@ -20,7 +20,7 @@ def get_predictor(predictor_type:'str',
         if "features" not in kwargs:
             raise Exception(f"predictor_type {predictor_type} needs features. features cannot be None")
         hyperparameters =  kwargs["hperparameters"] if "hyperparameters" in kwargs else None
-        return Clustering_predictor(training_data=train_data, idx2comb=kwargs["idx2comb"], features=kwargs["features"], 
+        return Kmeans_predictor(training_data=train_data, idx2comb=kwargs["idx2comb"], features=kwargs["features"], 
                                     filter=kwargs["filter"], hyperparameters=hyperparameters) 
     elif predictor_type == "autofolio":
         if "features" not in kwargs:

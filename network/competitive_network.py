@@ -179,7 +179,7 @@ def main():
     save_weights_file = arguments.save
     fold = arguments.fold
     multiplier = arguments.multiplier
-
+    print(multiplier, learning_rate)
     bert_type = "tororoin/longformer-8bitadam-2048-main"
     f = open(dataset)
     data = loads(f.read())
@@ -239,8 +239,9 @@ def main():
     saver = Save_weights(save_weights_file, multiplier)
     timeouts = [sum([1 if times[i, j] >= 3600 else 0 for i in range(len_train)]) for j in range(16)]
     max_timeouts = max(timeouts)
-    timeouts = [10 * (1 - (timeout / max_timeouts)) for timeout in timeouts]
+    timeouts = [1 + (1 - (timeout / max_timeouts)) for timeout in timeouts]
     weights = torch.tensor(timeouts)
+    print(weights)
     weights = weights.to(device)
 
     def loss(y_pred, y_true):
@@ -248,6 +249,7 @@ def main():
         timeouts = -(multiplier * y_true["competitivness"] * torch.log(timeouts_out) + (1 - y_true["competitivness"]) * torch.log(1 - timeouts_out))
         timeouts = timeouts * weights
         timeouts = torch.mean(timeouts)
+        print(timeouts)
         return timeouts
 
     def extraction_function(x):

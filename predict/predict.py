@@ -8,7 +8,7 @@ import json
 from helper import is_competitive
 from predictor.base_predictor import Predictor
 from predictor.autofolio_predictor import Autofolio_predictor, Autofolio_initializer
-from predictor.clustering_predictor import Clustering_predictor, Clustering_initializer
+from predictor.clustering_predictor import Kmeans_predictor, kmeans_initializer
 from predictor.order_predictor import Static_ordering_predictor, Static_ordering_initializer
 from predictor.order_metrics import Metrics_predictor, Metrics_initializer
 
@@ -27,8 +27,8 @@ def load(name) -> Predictor:
         initializer = Metrics_initializer(config["order"], config["idx2comb"])
         return Metrics_predictor.from_pretrained(initializer)
     elif config["predictor_type"] == "kmeans":
-        initializer = Clustering_initializer(os.path.join(name, Clustering_predictor.MODEL_NAME), config["order"], config["idx2comb"])
-        return Clustering_predictor.from_pretrained(initializer)
+        initializer = kmeans_initializer(os.path.join(name, Kmeans_predictor.MODEL_NAME), config["order"], config["idx2comb"])
+        return Kmeans_predictor.from_pretrained(initializer)
     else:
         raise Exception(f"predictor_type {config['predictor_type']} unrecognised")
 
@@ -83,7 +83,7 @@ def train(arguments):
         predictor = Static_ordering_predictor(idx2comb=idx2comb, training_data=train_data, ordering_type=arguments.ordering)
         data_to_save["order"] = predictor.order
     elif predictor_type == "kmeans":
-        predictor = Clustering_predictor(training_data=train_data, idx2comb=idx2comb, features=features,filter=arguments.filter) 
+        predictor = Kmeans_predictor(training_data=train_data, idx2comb=idx2comb, features=features,filter=arguments.filter) 
         data_to_save["order"] = predictor.order
     elif predictor_type == "autofolio":
         predictor = Autofolio_predictor(training_data=train_data, features=features, max_threads=arguments.max_threads)
@@ -106,7 +106,7 @@ def train(arguments):
     if predictor_type == "autofolio":
         shutil.copy(predictor.model, os.path.join(arguments.name, Autofolio_predictor.MODEL_NAME))
     if predictor_type == "kmeans":
-        joblib.dump(predictor.clustering_model, os.path.join(arguments.name, Clustering_predictor.MODEL_NAME))
+        joblib.dump(predictor.clustering_model, os.path.join(arguments.name, Kmeans_predictor.MODEL_NAME))
 
 def predict(args):
     predictor = load(args.name)

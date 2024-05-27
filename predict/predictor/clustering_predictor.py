@@ -2,17 +2,17 @@ from .base_predictor import Predictor, Predictor_initializer
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import ParameterGrid
-from sklearn.cluster import KMeans
+from sklearn.cluster import KMeans, AgglomerativeClustering
 import joblib
 
-class Clustering_initializer(Predictor_initializer):
+class kmeans_initializer(Predictor_initializer):
     def __init__(self, pretrained_clustering_file_path:'str', order:'dict', idx2comb:'dict') -> None:
         super().__init__()
         self.kmeans = joblib.load(pretrained_clustering_file_path)
         self.order = order
         self.idx2comb = idx2comb
 
-class Clustering_predictor(Predictor):
+class Kmeans_predictor(Predictor):
 
     MODEL_NAME = "kmeans.pkl"
 
@@ -106,8 +106,8 @@ class Clustering_predictor(Predictor):
         return best_cluster_val[0]
 
     @staticmethod 
-    def from_pretrained(pretrained:'Clustering_initializer') -> 'Clustering_predictor':
-        predictor = Clustering_predictor(None, None, None, None)
+    def from_pretrained(pretrained:'kmeans_initializer') -> 'Kmeans_predictor':
+        predictor = Kmeans_predictor(None, None, None, None)
         predictor.idx2comb = pretrained.idx2comb
         predictor.order = pretrained.order
         predictor.clustering_model = pretrained.kmeans
