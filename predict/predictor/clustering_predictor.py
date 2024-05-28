@@ -89,7 +89,7 @@ class Kmeans_predictor(Predictor):
             for i in range(len(train_data)):
                 for option in train_data[i]["times"].keys():
                     stats[y_pred[i]][option] += train_data[i]["times"][option]
-            order = {i: {k:v for k, v in sorted(stats[i].items(), key=lambda item: item[1], reverse=False)} for i in range(params["n_clusters"])}
+            order = {str(i): {k:v for k, v in sorted(stats[i].items(), key=lambda item: item[1], reverse=False)} for i in range(params["n_clusters"])}
             time = 0
             for datapoint in validation_data:
                 datapoint_features = features[features["inst"] == datapoint["inst"]].to_numpy()[0][1:]
@@ -150,7 +150,6 @@ class Kmeans_predictor(Predictor):
 
         is_single = type(dataset[0]) == float
         dataset = self.__get_dataset(dataset)
-
         if filter and len(dataset[0]["features"]) != len(list(self.idx2comb.keys())):
             raise Exception(f"number of features is different from number of combinations: {len(dataset[0]['features'])} != {len(list(self.idx2comb.keys()))}")
 

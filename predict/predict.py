@@ -66,12 +66,13 @@ def train(arguments):
     train_data = []
 
     for i in range(len(features)):
-        true_times = times.iloc[i][combinations]
+        inst = features[i]["inst"]
+        true_times = times[times["inst"] == inst].iloc[0][combinations]
         vb = min(true_times)
 
         train_data.append({
             "trues": [0 if is_competitive(vb, t) else 1 for t in true_times],
-            "inst": times.iloc[i]["inst"],
+            "inst": inst,
             "times": true_times,
         })
 
