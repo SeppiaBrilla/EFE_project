@@ -114,11 +114,11 @@ def predict(args):
     features = args.features
     if "," in features:
         features = [float(v) for v in features.split(",")]
-        start_time = time()
         output = {}
-        output["chosen_option"] = predictor.predict(features)
-        if args.time:
-            output["prediction_time"] = time() - start_time
+        output = predictor.predict(features)
+        del output["inst"]
+        if not args.time:
+            del output["time"]
         if args.output == "text":
             output = "\n".join([f"{key}:    {output[key]}" for key in output.keys()])
         elif args.output == "json":
@@ -132,24 +132,22 @@ def predict(args):
         df = pd.read_csv(features)
         instances = df["inst"].to_list()
         features = [{"inst": inst, "features": df[df["inst"] == inst].to_numpy()[0].tolist()[1:]} for inst in instances]
-        start_time = time()
         predictions = predictor.predict(features)
-        final_time = time() - start_time
         output = {}
         output["predictions"] = predictions
-        if args.time:
-            output["prediction_time"] = final_time
+        if not args.time:
+            del output["time"]
         if args.output == "text":
             output = "predictions:"
             for prediction in predictions:
                 output += f"\n\t- {prediction['inst']}:  {prediction['chosen_option']}"
-            output += f"\nprediction time:  {final_time}"
+            output += f"\nprediction time:  {output['time']}"
         elif args.output == "json":
             output = json.dumps(output)
         elif args.output == "csv":
             output = "inst,chosen_option,total_time"
             for prediction in predictions:
-                output += f"{prediction['inst']},{prediction['chosen_option']},{final_time}"
+                output += f"{prediction['inst']},{prediction['chosen_option']},{output['time']}"
         print(output)
     
 

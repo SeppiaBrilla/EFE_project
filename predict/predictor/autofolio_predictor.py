@@ -6,6 +6,7 @@ import re
 import subprocess
 import pandas as pd
 import os
+from time import time
 
 class Autofolio_initializer(Predictor_initializer):
     def __init__(self, model:'str', max_threads:'int') -> None:
@@ -97,20 +98,21 @@ class Autofolio_predictor(Predictor):
             file.write(f"{','.join(d)}\n")
 
     def __get_prediction(self, options:'list', inst:'str'):
+        start = time()
         options = [str(o) for o in options]
         out = subprocess.run(['python3', 'AutoFolio/scripts/autofolio', '--load', self.model, '--feature_vec', f'{" ".join(options)}'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         out = out.stdout.decode('utf-8')
         chosen_option = re.findall(r"\[\('([a-zA-Z0-9.,-_]*)', [0-9]*\)\]", out)
         if len(chosen_option) == 0:
             raise Exception(out)
-        return chosen_option[0], inst
+        return chosen_option[0], inst, time() - start
 
     def __get_dataset(self, dataset:'list') -> 'list[dict]':
         if type(dataset[0]) == float:
             return [{"inst":"", "features":dataset}]
         return dataset
 
-    def predict(self, dataset:'list[dict]|list[float]', filter:'bool'=False) -> 'list[dict]|str':
+    def predict(self, dataset:'list[dict]|list[float]', filter:'bool'=False) -> 'list[dict]|dict':
         """
         Given a dataset, return a list containing each prediction for each datapoint and the sum of the total predicted time.
         -------
@@ -137,10 +139,10 @@ class Autofolio_predictor(Predictor):
                 text = futures[future]
                 try:
                     result = future.result()
-                    predictions.append({"chosen_option": result[0], "inst": result[1]})
+                    predictions.append({"chosen_option": result[0], "inst": result[1], "time": result[2]})
                 except Exception as e:
                     print(f"An error occurred for text '{text}': {e}", file=stderr)
 
         if is_single:
-            return predictions[0]["chosen_option"]
+            return predictions[0]
         return predictions

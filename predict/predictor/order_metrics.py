@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from .base_predictor import Predictor, Predictor_initializer
 from sklearn.metrics import recall_score, precision_score, accuracy_score, f1_score
+from time import time
 
 class Metrics_initializer(Predictor_initializer):
     def __init__(self, order:'list[str]', idx2comb:'dict') -> None:
@@ -93,7 +94,7 @@ class Metrics_predictor(Predictor):
             return [{"inst":"", "features":dataset}]
         return dataset
 
-    def predict(self, dataset:'list[dict]|list[float]', filter:'bool'=False) -> 'list[dict]|str':
+    def predict(self, dataset:'list[dict]|list[float]', filter:'bool'=False) -> 'list[dict]|dict':
         """
         Given a dataset, return a list containing each prediction for each datapoint and the sum of the total predicted time.
         -------
@@ -115,16 +116,17 @@ class Metrics_predictor(Predictor):
 
         predictions = []
         for datapoint in dataset:
+            start = time()
             options = list(self.idx2comb.values())
             if filter:
                 options = [o for o in self.comb2idx.keys() if datapoint["features"][self.comb2idx[o]] < .5]
                 if len(options) == 0:
                     options = list(self.idx2comb.values())
             chosen_option = self.__get_prediction(options)
-            predictions.append({"chosen_option": chosen_option, "inst": datapoint["inst"]})
+            predictions.append({"chosen_option": chosen_option, "inst": datapoint["inst"], "time": time() - start})
 
         if is_single:
-            return predictions[0]["chosen_option"]
+            return predictions[0]
 
         return predictions
 

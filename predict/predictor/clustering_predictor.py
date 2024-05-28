@@ -4,6 +4,7 @@ import numpy as np
 from sklearn.model_selection import ParameterGrid
 from sklearn.cluster import KMeans, AgglomerativeClustering
 import joblib
+from time import time
 
 class kmeans_initializer(Predictor_initializer):
     def __init__(self, pretrained_clustering_file_path:'str', order:'dict', idx2comb:'dict') -> None:
@@ -134,7 +135,7 @@ class Kmeans_predictor(Predictor):
             if candidate in options:
                 return candidate
 
-    def predict(self, dataset:'list[dict]|list[float]', filter:'bool'=False) -> 'list[dict]|str':
+    def predict(self, dataset:'list[dict]|list[float]', filter:'bool'=False) -> 'list[dict]|dict':
         """
         Given a dataset, return a list containing each prediction for each datapoint and the sum of the total predicted time.
         -------
@@ -155,6 +156,7 @@ class Kmeans_predictor(Predictor):
 
         predictions = []
         for datapoint in dataset:
+            start = time()
             category = self.clustering_model.predict(np.array(datapoint["features"]).reshape(1,-1))
             options = list(self.idx2comb.values())
             if filter:
@@ -162,8 +164,8 @@ class Kmeans_predictor(Predictor):
                 if len(options) == 0:
                     options = list(self.idx2comb.values())
             chosen_option = self.__get_prediction(options, int(category[0]))
-            predictions.append({"chosen_option": chosen_option, "inst": datapoint["inst"]})
+            predictions.append({"chosen_option": chosen_option, "inst": datapoint["inst"], "time": time() - start})
 
         if is_single:
-            return predictions[0]["chosen_option"]
+            return predictions[0]
         return predictions
