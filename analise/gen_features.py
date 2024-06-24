@@ -78,7 +78,7 @@ def parse_args():
 
 def main():
     if len(argv) < 2:
-        print("error, please pass sthe necessary parameters. Use --help if needed")
+        print("error, please pass the necessary parameters. Use --help if needed")
         return
     if argv[1] == "--help" or argv[1] == "-h":
         print(f"""usage: {argv[0]} [options] eprime_file param_file
@@ -88,7 +88,7 @@ def main():
 --help/-h       shows this message""")
         return
     if len(argv) < 3:
-        print("error, please pass sthe necessary parameters. Use --help if needed")
+        print("error, please pass the necessary parameters. Use --help if needed")
         return
 
     args = parse_args()

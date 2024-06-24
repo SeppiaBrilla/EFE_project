@@ -1,4 +1,5 @@
 from .base_predictor import Predictor, Predictor_initializer
+from tqdm import tqdm
 from sys import stderr
 import platform
 import concurrent.futures
@@ -65,6 +66,10 @@ class Autofolio_predictor(Predictor):
             x_train_file = self.__create_file(features_file)
             x_train_file.write(",".join(x_header) + "\n")
             x_train = [[str(f) for f in features[features["inst"] == datapoint["inst"]].to_numpy()[0].tolist()] for datapoint in training_data]
+            for i in range(len(training_data)):
+                inst = training_data[i]["inst"]
+                x_train[i].pop(x_train[i].index(inst))
+                x_train[i] = [inst] + x_train[i]
             self.__save(x_train, x_train_file)
             x_train_file.close()
             combinations = sorted(list(training_data[0]["times"].keys()))
@@ -146,3 +151,14 @@ class Autofolio_predictor(Predictor):
         if is_single:
             return predictions[0]
         return predictions
+    
+    def predict_sequential(self, dataset:'list[dict]') -> 'list[dict]|dict':
+        predictions = []
+        for datapoint in tqdm(dataset):
+            try:
+                prediction = self.__get_prediction(datapoint["features"], datapoint["inst"])
+                predictions.append({"chosen_option": prediction[0], "inst": prediction[1], "time": prediction[2]})
+            except Exception as e:
+                print(f"An error occurred for text '{datapoint['inst']}': {e}", file=stderr)
+        return predictions
+    
