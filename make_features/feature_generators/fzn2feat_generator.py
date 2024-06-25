@@ -26,7 +26,7 @@ class Fzn2feat_generator(Generator):
                 os.remove(os.path.join(current_dir, file))
 
     def __call_savilerow(self, eprime, param):
-        command = ["savilerow", eprime, param, "-chuffed"]
+        command = ["runsolver", "-R", "16384", "savilerow", eprime, param, "-chuffed"]
         process = run(command, stdout=PIPE, stderr=STDOUT, check=True, encoding="UTF-8")
         pattern = "Created output file (.*fzn)"
         prog = compile(pattern)
@@ -34,6 +34,7 @@ class Fzn2feat_generator(Generator):
             match = prog.match(line)
             if match:
                 return match.group(1)
+        raise Exception(process.stdout)
 
     def __call_conjure(self, eprime, param):
         command = ["conjure", "translate-parameter", f"--eprime={eprime}", f"--essence-param={param}", f"--eprime-param={self.TEMP_FILE}.eprime-param"]
@@ -51,6 +52,7 @@ class Fzn2feat_generator(Generator):
             os.mkdir(".cache")
 
         self.__call_conjure(eprime_file, param_file)
+        run(['ls', '.cache'])
         generated_file = self.__call_savilerow(eprime_file, f"{self.TEMP_FILE}.eprime-param")
         res = self.__call_fzn2feat(generated_file)
         res = res.replace("'", '"')

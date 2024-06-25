@@ -1,5 +1,6 @@
 import argparse
 import json
+from sys import stderr
 from time import time
 from feature_generators.dnn_generator import Language_features_generator
 from feature_generators.fzn2feat_generator import Fzn2feat_generator
@@ -25,10 +26,17 @@ def generate_fzn2feat_features(args) -> "dict":
         raise Exception("argument eprime is required with the fzn2feat generation")
     generator = Fzn2feat_generator(args.eprime)
     start_time = time()
-    features = generator.generate(args.instance)
-    end_time = time() - start_time
-    if args.time:
-        features = {"time": end_time, "features":features}
+    try:
+        features = generator.generate(args.instance)
+        end_time = time() - start_time
+        if args.time:
+            features = {"time": end_time, "features":features}
+    except Exception as e:
+        print(f"unable to generate the features. Reason:\n{e}", file=stderr)
+        end_time = time() - start_time
+        features = {}
+        if args.time:
+            features = {"time": end_time, "features": {}}
     return features
 
 parser = argparse.ArgumentParser()
