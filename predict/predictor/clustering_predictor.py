@@ -1,8 +1,9 @@
 from .base_predictor import Predictor, Predictor_initializer
+from tqdm import tqdm
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import ParameterGrid
-from sklearn.cluster import KMeans, AgglomerativeClustering
+from sklearn.cluster import KMeans
 import joblib
 from time import time
 
@@ -53,7 +54,13 @@ class Kmeans_predictor(Predictor):
         train = training_data[:TRAIN_ELEMENTS]
         validation = training_data[TRAIN_ELEMENTS:]
 
-        training_features = np.array([features[features["inst"] == datapoint["inst"]].to_numpy()[0][1:].tolist() for datapoint in train])
+        training_features = [[str(f) for f in features[features["inst"] == datapoint["inst"]].to_numpy()[0].tolist()] for datapoint in training_data]
+        for i in range(len(training_data)):
+            inst = training_data[i]["inst"]
+            training_features[i].pop(training_features[i].index(inst))
+
+        training_features = np.array(training_features)
+
         if hyperparameters is None:
             hyperparameters = self.__get_clustering_parameters(training_features, train, validation, features, idx2comb, filter)
         self.clustering_parameters = hyperparameters
@@ -83,7 +90,7 @@ class Kmeans_predictor(Predictor):
             'verbose': [0]
         }))
         clusters_val = []
-        for params in parameters:
+        for params in tqdm(parameters):
             kmeans = KMeans(**params)
             y_pred = kmeans.fit_predict(training_features)
             stats = {i: {comb:0 for comb in idx2comb.values()} for i in range(params["n_clusters"])}
@@ -93,7 +100,9 @@ class Kmeans_predictor(Predictor):
             order = {str(i): {k:v for k, v in sorted(stats[i].items(), key=lambda item: item[1], reverse=False)} for i in range(params["n_clusters"])}
             time = 0
             for datapoint in validation_data:
-                datapoint_features = features[features["inst"] == datapoint["inst"]].to_numpy()[0][1:]
+                datapoint_features = features[features["inst"] == datapoint["inst"]].to_numpy()[0].tolist()
+                datapoint_features.pop(datapoint_features.index(datapoint["inst"]))
+                datapoint_features = np.array(datapoint_features)
                 preds = kmeans.predict(datapoint_features.reshape(1, -1))
                 datapoint_candidates = list(idx2comb.values())
                 if filter:
@@ -129,7 +138,6 @@ class Kmeans_predictor(Predictor):
         return dataset
 
     def __get_prediction(self, options:'list', category:'int', order:'dict|None' = None):
-
         order = order if not order is None else self.order
         for candidate in order[str(category)]:
             if candidate in options:
@@ -155,7 +163,7 @@ class Kmeans_predictor(Predictor):
             raise Exception(f"number of features is different from number of combinations: {len(dataset[0]['features'])} != {len(list(self.idx2comb.keys()))}")
 
         predictions = []
-        for datapoint in dataset:
+        for datapoint in tqdm(dataset):
             start = time()
             category = self.clustering_model.predict(np.array(datapoint["features"]).reshape(1,-1))
             options = list(self.idx2comb.values())

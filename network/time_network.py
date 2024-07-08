@@ -2,7 +2,6 @@ import torch.functional as F
 import argparse
 from torch.utils.data import DataLoader
 import torch
-from random import randint
 from json import loads
 import numpy as np
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
@@ -33,7 +32,7 @@ class Timeout_analiser(In_between_epochs):
         for i in range(len(preds)):
             _, y_true = trues.dataset[i]
             y_pred = preds[i]
-            pred_idx = torch.argmax(y_pred)
+            pred_idx = np.argmax(y_pred)
             time += y_true['times'][idx2comb[pred_idx]]
             for idx in range(len(y_pred)):
                 if y_pred[idx] == y_true["competitivness"][idx]:
@@ -109,9 +108,6 @@ class Save_weights(In_between_epochs):
         name = f"{self.name}_{self.mult}_{self.epochs}"
         torch.save(model.state_dict(), name)
         return False
-
-def is_competitive(vb, option):
-    return (option < 10 or vb * 2 <= option) and option < 3600
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--dataset", required=True)
@@ -199,7 +195,6 @@ def main():
     max_timeouts = max(timeouts)
     timeouts = [1 + (1 - (timeout / max_timeouts)) for timeout in timeouts]
     weights = torch.tensor(timeouts)
-    print(weights)
     weights = weights.to(device)
 
     def loss(y_pred, y_true):

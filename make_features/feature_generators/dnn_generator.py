@@ -32,6 +32,9 @@ class Language_features_generator(Generator):
         tokenized_instance = self.tokenizer(instance, truncation=True, return_tensors="pt")
         tokenized_instance = {k:tokenized_instance[k].to(self.device) for k in tokenized_instance.keys()}
         model_output = self.model(tokenized_instance)
+        keys = list(tokenized_instance.keys())
+        for k in keys:
+            del tokenized_instance[k]
         if self.probabilities_only:
             return {self.names[i]: model_output["out"][i] for i in range(len(self.names))}
         else:

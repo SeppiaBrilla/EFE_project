@@ -82,7 +82,7 @@ class Autofolio_predictor(Predictor):
 
             subprocess.run(
                 ["python", "AutoFolio/scripts/autofolio", 
-                 "--performance_csv", times_file, "--feature_csv", features_file, "-t", "--save", pre_trained_model])
+                 "--performance_csv", times_file, "--feature_csv", features_file, "--save", pre_trained_model])
         self.model = pre_trained_model
 
     @staticmethod
@@ -140,7 +140,7 @@ class Autofolio_predictor(Predictor):
         with concurrent.futures.ThreadPoolExecutor(self.max_threads) as executor:
             futures = {executor.submit(self.__get_prediction,datapoint["features"], datapoint["inst"]): datapoint["inst"] for datapoint in dataset}
 
-            for future in concurrent.futures.as_completed(futures):
+            for future in tqdm(concurrent.futures.as_completed(futures)):
                 text = futures[future]
                 try:
                     result = future.result()

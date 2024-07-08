@@ -154,7 +154,7 @@ class Save_weights(In_between_epochs):
         return False
 
 def is_competitive(vb, option):
-    return (option < 10 or vb * 2 <= option) and option < 3600
+    return (option < 10 or vb * 2 >= option) and option < 3600
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--dataset", required=True)
@@ -179,7 +179,6 @@ def main():
     save_weights_file = arguments.save
     fold = arguments.fold
     multiplier = arguments.multiplier
-    print(multiplier, learning_rate)
     bert_type = "tororoin/longformer-8bitadam-2048-main"
     f = open(dataset)
     data = loads(f.read())
@@ -199,14 +198,14 @@ def main():
         ordered_times = [d["time"] for d in datapoint["all_times"]]
         ordered_times = sorted(ordered_times)
         vb = min([d["time"] for d in y_datapoint])
-        competitivness = [0 if is_competitive(vb, d["time"]) else 1 for d in y_datapoint]
+        competitivness = [0. if is_competitive(vb, d["time"]) else 1. for d in y_datapoint]
         y.append({
             "competitivness":torch.Tensor(competitivness),
             "times": {d["combination"]:d["time"] for d in y_datapoint}
         })
         
     all_times = [datapoint["all_times"] for datapoint in data]
-    train_dataloader, validation_dataloader, test_dataloader = get_dataloader(x, y, 1, [fold])
+    train_dataloader, validation_dataloader, test_dataloader = get_dataloader(x, y, 2, [fold])
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print("operating on device:", device)
@@ -217,6 +216,12 @@ def main():
         model.load_state_dict(torch.load(pretrained_weights))
 
     times = get_time_matrix((len(all_times), len(combinations)), all_times)
+    for param in model.bert.parameters():
+        param.requires_grad = False
+
+# Unfreeze the last encoder layer
+    for param in model.bert.encoder.layer[-1].parameters():
+        param.requires_grad = True
 
     len_train = len(train_dataloader.dataset)
     len_val = len(validation_dataloader.dataset)
@@ -241,7 +246,6 @@ def main():
     max_timeouts = max(timeouts)
     timeouts = [1 + (1 - (timeout / max_timeouts)) for timeout in timeouts]
     weights = torch.tensor(timeouts)
-    print(weights)
     weights = weights.to(device)
 
     def loss(y_pred, y_true):
@@ -249,7 +253,6 @@ def main():
         timeouts = -(multiplier * y_true["competitivness"] * torch.log(timeouts_out) + (1 - y_true["competitivness"]) * torch.log(1 - timeouts_out))
         timeouts = timeouts * weights
         timeouts = torch.mean(timeouts)
-        print(timeouts)
         return timeouts
 
     def extraction_function(x):
@@ -270,7 +273,7 @@ def main():
                      "f1_score": lambda y_true, y_pred: f1_score(np.ravel(y_true), np.ravel(y_pred), average="macro", zero_division=0),
                      "precision": lambda y_true, y_pred: precision_score(np.ravel(y_true), np.ravel(y_pred), average="macro", zero_division=0),
                      "recall": lambda y_true, y_pred: recall_score(np.ravel(y_true), np.ravel(y_pred), average="macro", zero_division=0)},
-                    in_between_epochs={"validate_timeout":timeout_analiser, "save": saver},
+                    # in_between_epochs={"validate_timeout":timeout_analiser, "save": saver},
                     learning_rate=learning_rate,
                     epochs=epochs)
 

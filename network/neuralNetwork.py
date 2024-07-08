@@ -105,47 +105,47 @@ class NeuralNetwork(nn.Module):
             if automatically_handle_gpu_memory:
               self.__remove(inputs)
               torch.cuda.empty_cache()
-
-        val_metrics, val_loss = self.__validate(validation_loader, metrics, loss_function, device, output_extraction_function, automatically_handle_gpu_memory)
-        for key in metrics:
-          val_metrics_scores[key].append(val_metrics[key])
-        val_loss_history.append(val_loss)
-        train_metrics, train_loss = self.__validate(train_loader, metrics, loss_function, device, output_extraction_function, automatically_handle_gpu_memory)
-        for key in metrics:
-          train_metrics_scores[key].append(train_metrics[key])
-        train_loss_history.append(train_loss)
-        if verbose:
-          train_loss_str, val_loss_str = "{:10.3f}".format(train_loss_history[-1]), "{:10.3f}".format(val_loss_history[-1])
-          train_metrics_score_str = {metric: "{:10.3f}".format(train_metrics_scores[metric][-1]) for metric in metrics.keys()}
-          val_metrics_score_str = {metric: "{:10.3f}".format(val_metrics_scores[metric][-1]) for metric in metrics.keys()}
-          out_str = f"EPOCH {epoch + 1} training loss: {train_loss_str} - validation loss: {val_loss_str}\n" + \
-          '\n'.join([f"EPOCH {epoch + 1} training {metric}: {train_metrics_score_str[metric]} - validation {metric}: {val_metrics_score_str[metric]}" for metric in metrics.keys()]) +\
-          f"\n{'-'*100}\n"
-          stdout.write("\r" + " " * len(out_str) + "\r")
-          stdout.flush()
-          stdout.write(out_str)
-          stdout.flush()
-          print()
+        #
+        # val_metrics, val_loss = self.__validate(validation_loader, metrics, loss_function, device, output_extraction_function, automatically_handle_gpu_memory)
+        # for key in metrics:
+        #   val_metrics_scores[key].append(val_metrics[key])
+        # val_loss_history.append(val_loss)
+        # train_metrics, train_loss = self.__validate(train_loader, metrics, loss_function, device, output_extraction_function, automatically_handle_gpu_memory)
+        # for key in metrics:
+        #   train_metrics_scores[key].append(train_metrics[key])
+        # train_loss_history.append(train_loss)
+        # if verbose:
+        #   train_loss_str, val_loss_str = "{:10.3f}".format(train_loss_history[-1]), "{:10.3f}".format(val_loss_history[-1])
+        #   train_metrics_score_str = {metric: "{:10.3f}".format(train_metrics_scores[metric][-1]) for metric in metrics.keys()}
+        #   val_metrics_score_str = {metric: "{:10.3f}".format(val_metrics_scores[metric][-1]) for metric in metrics.keys()}
+        #   out_str = f"EPOCH {epoch + 1} training loss: {train_loss_str} - validation loss: {val_loss_str}\n" + \
+        #   '\n'.join([f"EPOCH {epoch + 1} training {metric}: {train_metrics_score_str[metric]} - validation {metric}: {val_metrics_score_str[metric]}" for metric in metrics.keys()]) +\
+        #   f"\n{'-'*100}\n"
+        #   stdout.write("\r" + " " * len(out_str) + "\r")
+        #   stdout.flush()
+        #   stdout.write(out_str)
+        #   stdout.flush()
+        #   print()
         if lr_schedule != None:
                 lr_schedule.step()
-        loaders = {"train": train_loader, "validation": validation_loader}
-        losses = {"train": train_loss_history[-1], "validation": val_loss_history[-1]}
-        for in_between in in_between_epochs.keys():
-            result = in_between_epochs[in_between](self, loaders, device, output_extraction_function, losses)
+        # loaders = {"train": train_loader, "validation": validation_loader}
+        # losses = {"train": train_loss_history[-1], "validation": val_loss_history[-1]}
+        # for in_between in in_between_epochs.keys():
+            # result = in_between_epochs[in_between](self, loaders, device, output_extraction_function, losses)
 
-            if not type(result) == bool:
-                raise Exception(f"in between {in_between} returned a non-boolean result: {result}")
-            elif result:
-                if verbose:
-                    print(f"stopping after {epochs} epochs because of in between {in_between}")
+            # if not type(result) == bool:
+                # raise Exception(f"in between {in_between} returned a non-boolean result: {result}")
+            # elif result:
+                # if verbose:
+                    # print(f"stopping after {epochs} epochs because of in between {in_between}")
 
-                train_metrics_scores['loss'] = train_loss_history
-                val_metrics_scores['loss'] = val_loss_history
-                return train_metrics_scores, val_metrics_scores
+                # train_metrics_scores['loss'] = train_loss_history
+                # val_metrics_scores['loss'] = val_loss_history
+                # return train_metrics_scores, val_metrics_scores
 
 
-    train_metrics_scores['loss'] = train_loss_history
-    val_metrics_scores['loss'] = val_loss_history
+    # train_metrics_scores['loss'] = train_loss_history
+    # val_metrics_scores['loss'] = val_loss_history
 
     if next(self.parameters()).device != old_device and automatically_handle_gpu_memory:
       del net
