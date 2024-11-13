@@ -1,7 +1,0 @@
-{"class_Function1D": {"1": 5, "10": 4, "11": 8, "2": 8, "3": 2, "4": 2, "5": 3, "6": 7, "7": 6, "8": 1, "9": 7},
- "deck_length": 79, "deck_width": 80, "fin1": 11, "fin2": 11, "fin3": 11, "fin4": 0, "fin5": 0,
- "length_Function1D":
-     {"1": 22, "10": 7, "11": 58, "2": 15, "3": 78, "4": 60, "5": 68, "6": 36, "7": 66, "8": 51, "9": 16},
- "n_classes": 8, "n_containers": 11, "separation_FunctionAsRelationR3_RelationAsSetR3_ExplicitR3_1_Explicit": {},
- "separation_FunctionAsRelationR3_RelationAsSetR3_ExplicitR3_2": {},
- "width_Function1D": {"1": 2, "10": 1, "11": 1, "2": 2, "3": 39, "4": 11, "5": 8, "6": 11, "7": 13, "8": 4, "9": 5}}

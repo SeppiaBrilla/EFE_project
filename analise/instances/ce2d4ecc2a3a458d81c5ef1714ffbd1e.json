@@ -1,3 +1,0 @@
-{"codeWordLength": 44,
- "dist_FunctionND": {"1": {"1": 0, "2": 15, "3": 13}, "2": {"1": 15, "2": 0, "3": 10}, "3": {"1": 13, "2": 10, "3": 0}},
- "fin1": 9, "maxDist": 17, "minDist": 3, "nbCharacter": 3, "numOfCodeWords": 14}
