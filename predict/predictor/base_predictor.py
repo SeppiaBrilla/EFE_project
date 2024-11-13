@@ -10,4 +10,10 @@ class Predictor:
             return [{"inst":"", "features":dataset}]
         return dataset
 
+def isnan(array:list):
+    for a in array:
+        if str(a) == "nan":
+            return True
+    return False
+
 

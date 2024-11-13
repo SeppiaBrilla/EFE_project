@@ -122,6 +122,7 @@ class Metrics_predictor(Predictor):
                 options = [o for o in self.comb2idx.keys() if datapoint["features"][self.comb2idx[o]] < .5]
                 if len(options) == 0:
                     options = list(self.idx2comb.values())
+                print(options)
             chosen_option = self.__get_prediction(options)
             predictions.append({"chosen_option": chosen_option, "inst": datapoint["inst"], "time": time() - start})
 

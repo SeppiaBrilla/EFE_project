@@ -8,6 +8,7 @@ import subprocess
 import pandas as pd
 import os
 from time import time
+import uuid
 
 class Autofolio_initializer(Predictor_initializer):
     def __init__(self, model:'str', max_threads:'int') -> None:
@@ -19,9 +20,11 @@ class Autofolio_predictor(Predictor):
     
     MODEL_NAME = "autofolio_random_forest_model"
     CACHE_DIR = ".cache"
+    PERSONAL_UUID = uuid.uuid4()
 
     def __init__(self, training_data:'list[dict]|None', 
                  features:'pd.DataFrame|None', 
+                 tune:'bool' = False,
                  max_threads:'int' = 12,
                  pre_trained_model:'str|None' = None
         ) -> 'None':
@@ -58,18 +61,24 @@ class Autofolio_predictor(Predictor):
             if not os.path.isdir(self.CACHE_DIR):
                 os.makedirs(self.CACHE_DIR)
 
-            times_file = os.path.join(self.CACHE_DIR, f"train_times.csv")
-            pre_trained_model = os.path.join(self.CACHE_DIR, self.MODEL_NAME)
-            features_file = os.path.join(self.CACHE_DIR, f"train_features.csv")
+            times_file = os.path.join(self.CACHE_DIR, f"train_times_{self.PERSONAL_UUID}.csv")
+            pre_trained_model = os.path.join(self.CACHE_DIR, f"{self.MODEL_NAME}_{self.PERSONAL_UUID}")
+            features_file = os.path.join(self.CACHE_DIR, f"train_features_{self.PERSONAL_UUID}.csv")
 
             x_header = list(features.columns)
             x_train_file = self.__create_file(features_file)
             x_train_file.write(",".join(x_header) + "\n")
             x_train = [[str(f) for f in features[features["inst"] == datapoint["inst"]].to_numpy()[0].tolist()] for datapoint in training_data]
+            times = {opt:0 for opt in training_data[0]["times"].keys()}
             for i in range(len(training_data)):
                 inst = training_data[i]["inst"]
                 x_train[i].pop(x_train[i].index(inst))
                 x_train[i] = [inst] + x_train[i]
+                for key in training_data[i]["times"].keys():
+                    times[key] += training_data[i]["times"][key]
+
+            self.sb = min(times.items())[0]
+            
             self.__save(x_train, x_train_file)
             x_train_file.close()
             combinations = sorted(list(training_data[0]["times"].keys()))
@@ -79,10 +88,18 @@ class Autofolio_predictor(Predictor):
             y_train = [[datapoint["inst"]] + [str(datapoint["times"][comb]) for comb in combinations] for datapoint in training_data]
             self.__save(y_train, y_train_file)
             y_train_file.close()
+            
+            if tune:
+                subprocess.run(
+                    ["python", "AutoFolio/scripts/autofolio",
+                     "--performance_csv", times_file, "--feature_csv", features_file, "--output_dir", f"{self.PERSONAL_UUID}",
+                     "-t","--wallclock_limit", str(18000), "--runcount_limit", str(999999999), "--save", pre_trained_model])
+                print(f"personal UUID: {self.PERSONAL_UUID}")
+            else:
+                subprocess.run(
+                    ["python", "AutoFolio/scripts/autofolio", 
+                    "--performance_csv", times_file, "--feature_csv", features_file, "--save", pre_trained_model])
 
-            subprocess.run(
-                ["python", "AutoFolio/scripts/autofolio", 
-                 "--performance_csv", times_file, "--feature_csv", features_file, "--save", pre_trained_model])
         self.model = pre_trained_model
 
     @staticmethod

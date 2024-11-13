@@ -66,7 +66,7 @@ def train(arguments):
     train_data = []
 
     for i in range(len(features)):
-        inst = features[i]["inst"]
+        inst = features.iloc[i]["inst"]
         true_times = times[times["inst"] == inst].iloc[0][combinations]
         vb = min(true_times)
 
@@ -131,25 +131,24 @@ def predict(args):
     elif os.path.exists(features):
         df = pd.read_csv(features)
         instances = df["inst"].to_list()
-        features = [{"inst": inst, "features": df[df["inst"] == inst].to_numpy()[0].tolist()[1:]} for inst in instances]
+        features = [{"inst": inst, "features": df[df["inst"] == inst].to_numpy()[0].tolist()[:-1]} for inst in instances]
         predictions = predictor.predict(features)
         output = {}
         output["predictions"] = predictions
-        if not args.time:
-            del output["time"]
+        # if not args.time:
+            # del output["time"]
         if args.output == "text":
             output = "predictions:"
             for prediction in predictions:
                 output += f"\n\t- {prediction['inst']}:  {prediction['chosen_option']}"
-            output += f"\nprediction time:  {output['time']}"
+                output += f"\nprediction time:  {prediction['time']}"
         elif args.output == "json":
             output = json.dumps(output)
         elif args.output == "csv":
             output = "inst,chosen_option,total_time"
             for prediction in predictions:
-                output += f"{prediction['inst']},{prediction['chosen_option']},{output['time']}"
+                output += f"{prediction['inst']},{prediction['chosen_option']},{prediction['time']}\n"
         print(output)
-    
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-m", "--mode", choices=["train", "predict"], help="mode for the script. train: train a classifier, predict (default): predict using a classifier", default="predict")
