@@ -13,20 +13,8 @@ from sys import stdout
 
 BERT_TYPE = "bert-base-uncased"
 
-def integer_ReLu(x:torch.Tensor):
-    x = nn.functional.relu(x) * 100
-    return torch.round(x)
-
-def integer_Sigmoid(x:torch.Tensor):
-    x = nn.functional.sigmoid(x)
-    return torch.round(x)
-
-def integer_Tanh(x:torch.Tensor):
-    x = nn.functional.tanh(x)
-    return torch.round(x)
-
-class CompetitiveModel(nn.Module):
-    def __init__(self, activation, feature_size, output_size) -> None:
+class DecisionModel(nn.Module):
+    def __init__(self, feature_size, output_size) -> None:
         super().__init__()
         self.config = BertConfig(max_position_embeddings=2048, hidden_dropout_prob=0, attention_probs_dropout_prob=0)
         self.bert = BertModel(self.config)
@@ -34,14 +22,7 @@ class CompetitiveModel(nn.Module):
         self.dropout = nn.Dropout(.3)
         self.post_features = nn.Linear(feature_size, 200)
         self.output_layer = nn.Linear(200, output_size)
-        if activation == "relu":
-            self.activation = integer_ReLu
-        elif activation == "sigmoid":
-            self.activation = integer_Sigmoid
-        elif activation == "tanh":
-            self.activation = integer_Tanh
-        elif activation == "ntanh":
-            self.activation = nn.functional.tanh
+        self.activation = nn.functional.tanh
 
     def forward(self, inputs):
         _, encoded_input = self.bert(**inputs, return_dict = False)
@@ -53,9 +34,6 @@ class CompetitiveModel(nn.Module):
         out = nn.functional.relu(out)
         out = self.dropout(out)
         return self.output_layer(out)
-
-def is_competitive(vb, option):
-    return (option < 10 or vb * 2 >= option) and option < 3600
 
 def to(data, device):
     if isinstance(data, dict):
@@ -115,9 +93,9 @@ def compute_total_loss_and_predictions(model:nn.Module,
 
             outputs = model(inputs)
             total_loss += loss(outputs, labels).item()
-            predictions = nn.functional.sigmoid(outputs).round()
+            predictions = nn.functional.sigmoid(outputs).argmax(dim=1)
             total_predictions += predictions.tolist()
-            total_labels += labels.tolist()
+            total_labels += labels.argmax(dim=1).tolist()
 
             remove(inputs)
             remove(labels)
@@ -136,7 +114,7 @@ def train(model:nn.Module,
     model = model.to(device)
     data = {"train": {"loss":[], "accuracy":[], "f1":[]}, "validation": {"loss":[], "accuracy":[], "f1":[]}}
 
-    best_model = CompetitiveModel(**hyperparam)
+    best_model = DecisionModel(**hyperparam)
     best_loss = np.inf
 
     for epoch in range(epochs):
@@ -174,7 +152,6 @@ def train(model:nn.Module,
     
     return best_model, data
 
-
 parser = argparse.ArgumentParser()
 parser.add_argument("--dataset", required=True)
 parser.add_argument("--epochs", type=int, required=True)
@@ -183,9 +160,7 @@ parser.add_argument("--save", required=True)
 parser.add_argument("--fold", type=int, required=True)
 parser.add_argument("--pre_trained", required=False)
 parser.add_argument("--history", required=False)
-parser.add_argument("--activation", required=False)
 parser.add_argument("--features_size", required=False, type=int)
-parser.add_argument("--limit", required=False, type=int, default=0)
 parser.add_argument("--batch-size", required=False, type=int, default=4)
 
 argcomplete.autocomplete(parser)
@@ -199,11 +174,9 @@ def main():
     save_weights_file = arguments.save
     fold = arguments.fold
     history_file = arguments.history
-    activation = arguments.activation
     feature_size = arguments.features_size
 
     batch_size = arguments.batch_size
-    limit = arguments.limit
 
     f = open(dataset)
     data = loads(f.read())
@@ -216,24 +189,12 @@ def main():
     y = []
 
     combinations = [d["combination"] for d in sorted(data[0]["all_times"], key= lambda x: x["combination"])]
-    if limit > 0:
-        comps = {comb: 0 for comb in combinations}
-        for datapoint in data:
-            y_datapoint = sorted(datapoint["all_times"], key= lambda x: x["combination"])
-            vb = min([d["time"] for d in y_datapoint])
-            for t in y_datapoint:
-                if is_competitive(vb, t["time"]):
-                    comps[t["combination"]] += 1
-        top_n = [c[0] for c in sorted(comps.items(), key=lambda x: x[1], reverse=True)][:limit]
-        combinations = [c for c in combinations if c in top_n]
     for datapoint in data:
         y_datapoint = sorted(datapoint["all_times"], key= lambda x: x["combination"])
         datapoint["all_times"] = y_datapoint
-        ordered_times = [d["time"] for d in datapoint["all_times"]]
-        ordered_times = sorted(ordered_times)
-        vb = min([d["time"] for d in y_datapoint])
-        competitivness = [1. if is_competitive(vb, d["time"]) else 0. for d in y_datapoint if d["combination"] in combinations]
-        y.append(torch.Tensor(competitivness))
+        _y = torch.zeros(len(combinations))
+        _y[combinations.index(datapoint["combination"])] = 1.
+        y.append(_y)
 
     train_dataloader, validation_dataloader, _ = get_dataloader(x, y, batch_size, [fold])
 
@@ -242,23 +203,14 @@ def main():
 
     length = len(combinations)
 
-    model = CompetitiveModel(activation, feature_size, length)
+    model = DecisionModel(feature_size, length)
     if pretrained_weights != None:
         model.load_state_dict(torch.load(pretrained_weights))
 
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
-    total_elements = len(y)
-    total_competitives = [sum([yi[i] for yi in y]) for i in range(length)]
-    weights = [1 + (1 - (total_competitives[i]/total_elements)) for i in range(length)]
-    weights = torch.tensor(weights, device=device)
-    def loss(pred, true):
-        logits = nn.functional.binary_cross_entropy_with_logits(pred, true, reduction="none")
-        logits = logits * weights
-
-        return torch.mean(logits)
-
-    model, train_data = train(model, train_dataloader, validation_dataloader, optimizer, loss, epochs, device, {"activation": activation, "feature_size": feature_size, "output_size": length})
+    loss = nn.CrossEntropyLoss()
+    model, train_data = train(model, train_dataloader, validation_dataloader, optimizer, loss, epochs, device, {"feature_size": feature_size, "output_size": length})
     torch.save(model.state_dict(), f"{save_weights_file}_final")
 
     f = open(history_file, "w")

@@ -6,8 +6,6 @@ from random import randint
 from torch.utils.data import Dataset, DataLoader
 from torch import zeros
 
-from neuralNetwork import NeuralNetwork
-
 class Dataset(Dataset):
     def __init__(self, x, y):
         self.x = x
@@ -130,7 +128,7 @@ def remove_comments(instance):
     instance = instance.replace("\n\n","")
     return instance
 
-def save_predictions(model:NeuralNetwork, loaders:dict[str,DataLoader], prediction_file:str, device:'str|torch.device', extraction_function = lambda x: x.tolist()):
+def save_predictions(model:torch.nn.Module, loaders:dict[str,DataLoader], prediction_file:str, device:'str|torch.device', extraction_function = lambda x: x.tolist()):
     model = model.to(device)
     model.eval()
     loaders_predictions = {}

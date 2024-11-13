@@ -1,3 +1,4 @@
+from typing import Callable
 from transformers import BertTokenizer, BertModel, RobertaTokenizer, RobertaModel, LongformerModel, LongformerTokenizer, AutoTokenizer, AutoModel
 import torch.nn as nn
 import torch
@@ -42,9 +43,20 @@ class Timeout_and_selection_model(NeuralNetwork):
             "timeouts": raw_timeouts
         }
 
+def integer_ReLu(x:torch.Tensor):
+    x = nn.functional.relu(x)
+    return torch.round(x)
+
+def integer_Sigmoind(x:torch.Tensor):
+    x = nn.functional.sigmoid(x)
+    return torch.round(x)
+
+def integer_Tanh(x:torch.Tensor):
+    x = nn.functional.tanh(x)
+    return torch.round(x)
 
 class BaseModel(NeuralNetwork):
-    def __init__(self, base_model_name, num_classes, dropout=.1) -> None:
+    def __init__(self, base_model_name, num_classes, dropout=.1, activation=None)-> None:
         super().__init__()
         if "FacebookAI/roberta-base" == base_model_name:
             self.bert = RobertaModel.from_pretrained(base_model_name)
@@ -58,13 +70,18 @@ class BaseModel(NeuralNetwork):
             self.bert = AutoModel.from_pretrained(base_model_name)
         self.dropout = nn.Dropout(dropout)
 
-        self.output_layer = nn.Linear(self.bert.config.hidden_size, num_classes)
+        self.activation = activation
+        self.intermediate = nn.Linear(self.bert.config.hidden_size, 100)
 
+        self.output_layer = nn.Linear(100, num_classes)
 
     def forward(self, inputs):
         _, encoded_input = self.bert(**inputs, return_dict = False)
         encoded_input = self.dropout(encoded_input)
-        return self.output_layer(encoded_input)
+        out = self.intermediate(encoded_input)
+        if not self.activation is None:
+            out = self.activation(out)
+        return self.output_layer(out)
 
 def get_tokenizer(bert_type:str):
     if "FacebookAI/roberta-base" == bert_type:
