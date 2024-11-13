@@ -52,11 +52,12 @@ class Fzn2feat_generator(Generator):
             os.mkdir(".cache")
 
         self.__call_conjure(eprime_file, param_file)
-        run(['ls', '.cache'])
         generated_file = self.__call_savilerow(eprime_file, f"{self.TEMP_FILE}.eprime-param")
         res = self.__call_fzn2feat(generated_file)
         res = res.replace("'", '"')
         self.__clean()
-        return res
-
-
+        new_res = []
+        for line in res.splitlines():
+            if not "warning" in line.lower():
+                new_res.append(line)
+        return '\n'.join(new_res).replace("-nan", "0").replace("nan","0").replace("-inf", "-1000000000").replace("inf", "1000000000")
