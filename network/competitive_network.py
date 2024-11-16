@@ -26,7 +26,7 @@ def integer_Tanh(x:torch.Tensor):
     return torch.round(x)
 
 class CompetitiveModel(nn.Module):
-    def __init__(self, activation, feature_size, output_size) -> None:
+    def __init__(self, feature_size, output_size) -> None:
         super().__init__()
         self.config = BertConfig(max_position_embeddings=2048, hidden_dropout_prob=0, attention_probs_dropout_prob=0)
         self.bert = BertModel(self.config)
@@ -34,14 +34,7 @@ class CompetitiveModel(nn.Module):
         self.dropout = nn.Dropout(.3)
         self.post_features = nn.Linear(feature_size, 200)
         self.output_layer = nn.Linear(200, output_size)
-        if activation == "relu":
-            self.activation = integer_ReLu
-        elif activation == "sigmoid":
-            self.activation = integer_Sigmoid
-        elif activation == "tanh":
-            self.activation = integer_Tanh
-        elif activation == "ntanh":
-            self.activation = nn.functional.tanh
+        self.activation = nn.functional.tanh
 
     def forward(self, inputs):
         _, encoded_input = self.bert(**inputs, return_dict = False)
@@ -183,7 +176,6 @@ parser.add_argument("--save", required=True)
 parser.add_argument("--fold", type=int, required=True)
 parser.add_argument("--pre_trained", required=False)
 parser.add_argument("--history", required=False)
-parser.add_argument("--activation", required=False)
 parser.add_argument("--features_size", required=False, type=int)
 parser.add_argument("--limit", required=False, type=int, default=0)
 parser.add_argument("--batch-size", required=False, type=int, default=4)
@@ -199,11 +191,9 @@ def main():
     save_weights_file = arguments.save
     fold = arguments.fold
     history_file = arguments.history
-    activation = arguments.activation
     feature_size = arguments.features_size
 
     batch_size = arguments.batch_size
-    limit = arguments.limit
 
     f = open(dataset)
     data = loads(f.read())
@@ -216,16 +206,6 @@ def main():
     y = []
 
     combinations = [d["combination"] for d in sorted(data[0]["all_times"], key= lambda x: x["combination"])]
-    if limit > 0:
-        comps = {comb: 0 for comb in combinations}
-        for datapoint in data:
-            y_datapoint = sorted(datapoint["all_times"], key= lambda x: x["combination"])
-            vb = min([d["time"] for d in y_datapoint])
-            for t in y_datapoint:
-                if is_competitive(vb, t["time"]):
-                    comps[t["combination"]] += 1
-        top_n = [c[0] for c in sorted(comps.items(), key=lambda x: x[1], reverse=True)][:limit]
-        combinations = [c for c in combinations if c in top_n]
     for datapoint in data:
         y_datapoint = sorted(datapoint["all_times"], key= lambda x: x["combination"])
         datapoint["all_times"] = y_datapoint
@@ -242,7 +222,7 @@ def main():
 
     length = len(combinations)
 
-    model = CompetitiveModel(activation, feature_size, length)
+    model = CompetitiveModel(feature_size, length)
     if pretrained_weights != None:
         model.load_state_dict(torch.load(pretrained_weights))
 
@@ -258,7 +238,7 @@ def main():
 
         return torch.mean(logits)
 
-    model, train_data = train(model, train_dataloader, validation_dataloader, optimizer, loss, epochs, device, {"activation": activation, "feature_size": feature_size, "output_size": length})
+    model, train_data = train(model, train_dataloader, validation_dataloader, optimizer, loss, epochs, device, {"feature_size": feature_size, "output_size": length})
     torch.save(model.state_dict(), f"{save_weights_file}_final")
 
     f = open(history_file, "w")
