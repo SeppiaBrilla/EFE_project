@@ -1,0 +1,1 @@
+{"train": {"accuracy": [], "f1_score": [], "precision": [], "recall": [], "loss": []}, "validation": {"accuracy": [], "f1_score": [], "precision": [], "recall": [], "loss": []}}
