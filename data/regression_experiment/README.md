@@ -13,8 +13,8 @@ where $y$ and $\hat{y}$ are. respectively, the true and predicted values, $\min(
 ## Results
 I have trained 4 folds of the covering array problem class. I've used a learning rate of $10^{-6}$ and trained the networks for 2300 epochs.
 The final loss scores were extremely good.
-![loss](loss.pdf)
+![loss](loss.png)
 Most of the folds reach a validation loss of below 1: (0: 0.482, 1: 1.093, 2: 0.557, 3: 0.675). We also see some kind of [Grokking](https://arxiv.org/abs/2405.19454) and the best results on the validation set are reached well after the trailng loss has stabilized.
 
 Even though the training seems to have produced very good results, while using the models to predict the algorithm, the results are less than ideal. I have tried compute the PAR10 scores on the regression models (RNN) and the regression models used as feature extractor paired with Kmeans (K, rNN). 
-![results](./results.pdf)
+![results](./results.png)
